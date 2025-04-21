@@ -45,7 +45,8 @@ public class ItemController {
             sb.append(iw.getSpeciesId()).append(".").append(iw.getName());
             if (n > 1) sb.append("✖️").append(n);
             sb.append("\n");
-            if (i <= 4) map.put(i++, "使用" + iw.getName());
+            if (i <= 2) map.put(i++, "使用" + iw.getName());
+            else if (i <= 4) map.put(i++, "出售" + iw.getName());
         }
         return List.of(sb, map);
     }

@@ -60,6 +60,14 @@ public abstract class KwGameApi {
         }
     }
 
+    public Integer getIntegerOrDefault(String s, Integer defaultValue) {
+        try {
+            return Integer.parseInt(s);
+        } catch (Exception e) {
+            return defaultValue;
+        }
+    }
+
     public Integer toId(String name) {
         if (Judge.isEmpty(name)) return null;
         Integer id = null;

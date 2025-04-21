@@ -4,7 +4,7 @@ import io.github.kloping.spt.annotations.Entity;
 import org.springframework.http.ResponseEntity;
 
 @Entity
-public class KwGameItemtApi extends KwGameApi {
+public class KwGameItemApi extends KwGameApi {
     @Override
     protected String getBasePath() {
         return "/items";
@@ -20,6 +20,9 @@ public class KwGameItemtApi extends KwGameApi {
 
     public ResponseEntity<String> buy(Long id, Integer itemId, Integer count) {
         return doGet("/buy?id={id}&itemId={itemId}&count={count}", id, itemId, count);
+    }
+    public ResponseEntity<String> sell(Long id, Integer itemId, Integer count) {
+        return doGet("/sell?id={id}&itemId={itemId}&count={count}", id, itemId, count);
     }
 
     public ResponseEntity<String> use(Long id, Integer itemId, Integer count) {

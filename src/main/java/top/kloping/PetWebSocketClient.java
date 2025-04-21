@@ -3,6 +3,7 @@ package top.kloping;
 import io.github.kloping.common.Public;
 import io.github.kloping.spt.PartUtils;
 import io.github.kloping.spt.annotations.AutoStand;
+import io.github.kloping.spt.annotations.AutoStandAfter;
 import io.github.kloping.spt.annotations.Entity;
 import io.github.kloping.spt.interfaces.Logger;
 import lombok.SneakyThrows;
@@ -14,6 +15,7 @@ import org.springframework.messaging.simp.stomp.StompSession;
 import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
+import top.kloping.api.KwGameApi;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +30,11 @@ public class PetWebSocketClient extends StompSessionHandlerAdapter implements Ru
 
     @AutoStand(id = "server.port")
     Integer server_port;
+
+    @AutoStandAfter
+    public void after() {
+        KwGameApi.URL = "http://" + server_ip + ":" + server_port;
+    }
 
     public StompSession stompSession;
     public StandardWebSocketClient webSocketClient;

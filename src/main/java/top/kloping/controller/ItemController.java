@@ -9,7 +9,7 @@ import io.github.kloping.spt.annotations.AutoStand;
 import io.github.kloping.spt.annotations.Controller;
 import io.github.kloping.spt.annotations.Param;
 import org.springframework.http.ResponseEntity;
-import top.kloping.api.KwGameItemtApi;
+import top.kloping.api.KwGameItemApi;
 import top.kloping.api.dto.ItemForShop;
 import top.kloping.api.dto.ItemWithName;
 import top.kloping.api.dto.UseResult;
@@ -26,7 +26,7 @@ import java.util.Objects;
 @Controller
 public class ItemController {
     @AutoStand
-    KwGameItemtApi api;
+    KwGameItemApi api;
 
     @AutoStand
     SelectController selectController;
@@ -64,13 +64,28 @@ public class ItemController {
         return sb.toString();
     }
 
+    @Action("出售<.*?=>x>")
+    public String sell(Long id, @Param("x") String s) {
+        if (!Judge.isEmpty(s)) {
+            String[] split = s.split("[xX]");
+            Integer itemId = api.getIdOrDefault(split[0], null);
+            Integer count = 1;
+            if (split.length > 1) count = api.getIntegerOrDefault(split[1], count);
+            if (itemId != null) {
+                ResponseEntity<String> data = api.sell(id, itemId, count);
+                return data.getBody();
+            }
+        }
+        return "❌ 格式错误\n🛒 出售示例'出售1001x2'或'出售经验书x2'\n表示为出售2个经验本";
+    }
+
     @Action("使用<.*?=>x>")
     public String use(Long id, @Param("x") String s) {
         if (!Judge.isEmpty(s)) {
             String[] split = s.split("[xX]");
             Integer itemId = api.getIdOrDefault(split[0], null);
             Integer count = 1;
-            if (split.length > 1) count = api.getIdOrDefault(split[1], count);
+            if (split.length > 1) count = api.getIntegerOrDefault(split[1], count);
             if (itemId != null) {
                 ResponseEntity<String> data = api.use(id, itemId, count);
                 UseResult result = api.convertT(data, UseResult.class);
@@ -90,7 +105,7 @@ public class ItemController {
             String[] split = s.split("[xX]");
             Integer itemId = api.getIdOrDefault(split[0], null);
             Integer count = 1;
-            if (split.length > 1) count = api.getIdOrDefault(split[1], count);
+            if (split.length > 1) count = api.getIntegerOrDefault(split[1], count);
             if (itemId != null) {
                 ResponseEntity<String> data = api.buy(id, itemId, count);
                 if (data.getStatusCode().value() == 200) {

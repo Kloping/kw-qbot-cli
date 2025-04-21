@@ -49,19 +49,7 @@ public class PetService implements StompFrameHandler {
         PetChangeData data = (PetChangeData) payload;
         MessageEvent messageEvent = records.get(data.getId());
         if (messageEvent != null) {
-            String sb;
-            if (data.getIsChange()) {
-                sb = data.getName() + "升级了\n" +
-                        "等级: +" + data.getLevel() + "\n" +
-                        "经验: +" + data.getExp() + "\n" +
-                        "生命: +" + data.getHp() + "\n" +
-                        "攻击: +" + data.getAttack() + "\n" +
-                        "防御: +" + data.getDefense() + "\n" +
-                        "速度: +" + data.getSpeed() + "\n";
-            } else {
-                sb = data.getName() + "获得了" + data.getExp() + "点经验";
-            }
-            sb = sb + "\n\n1.宠物信息  2.背包\n3.商城  4.我的宠物";
+            String sb = getRes(data);
             CliMain.sendToText(sb, messageEvent);
             selectController.register(data.getId(), i -> {
                 switch (i) {
@@ -77,5 +65,22 @@ public class PetService implements StompFrameHandler {
                 return null;
             });
         }
+    }
+
+    private static @NotNull String getRes(PetChangeData data) {
+        String sb;
+        if (data.getIsChange()) {
+            sb = data.getName() + "升级了\n" +
+                    "等级: +" + data.getLevel() + "\n" +
+                    "经验: +" + data.getExp() + "\n" +
+                    "生命: +" + data.getHp() + "\n" +
+                    "攻击: +" + data.getAttack() + "\n" +
+                    "防御: +" + data.getDefense() + "\n" +
+                    "速度: +" + data.getSpeed() + "\n";
+        } else {
+            sb = data.getName() + "获得了" + data.getExp() + "点经验";
+        }
+        sb = sb + "\n\n1.宠物信息  2.背包\n3.商城  4.我的宠物";
+        return sb;
     }
 }

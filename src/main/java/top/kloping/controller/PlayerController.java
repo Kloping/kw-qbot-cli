@@ -1,6 +1,5 @@
 package top.kloping.controller;
 
-import com.alibaba.fastjson.JSONObject;
 import io.github.kloping.judge.Judge;
 import io.github.kloping.spt.annotations.Action;
 import io.github.kloping.spt.annotations.AutoStand;
@@ -69,12 +68,25 @@ public class PlayerController {
         return "确定修改名为:'" + text + "'吗?\n下次修改时间将是14天后\n回复 1 确认 0 取消";
     }
 
+    @AutoStand
+    PetController petController;
+
     @Action("打工")
-    public String work(Long id) {
+    public String work(Long id,MessageEvent event) {
         ResponseEntity<String> data = api.work(id);
         if (data.getStatusCode().value() == 200) {
             DataWithTips dw = api.convertT(data, DataWithTips.class);
-            return dw.toString();
+            selectController.register(id, (i) -> {
+                switch (i){
+                    case 1:
+                        return show(id, event);
+                    case 2:
+                        return petController.list(id);
+                    default:
+                        return null;
+                }
+            });
+            return dw.toString() + "\n\n1.信息  2.我的宠物";
         } else return data.getBody();
     }
 

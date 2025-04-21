@@ -108,9 +108,6 @@ public class ItemController {
             if (split.length > 1) count = api.getIntegerOrDefault(split[1], count);
             if (itemId != null) {
                 ResponseEntity<String> data = api.buy(id, itemId, count);
-                if (data.getStatusCode().value() == 200) {
-                    return "✅ 购买成功";
-                }
                 return data.getBody();
             }
         }

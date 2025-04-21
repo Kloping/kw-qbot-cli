@@ -14,6 +14,7 @@ import top.kloping.controller.PetController;
 import top.kloping.controller.SelectController;
 
 import java.lang.reflect.Type;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -49,38 +50,16 @@ public class PetService implements StompFrameHandler {
         PetChangeData data = (PetChangeData) payload;
         MessageEvent messageEvent = records.get(data.getId());
         if (messageEvent != null) {
-            String sb = getRes(data);
-            CliMain.sendToText(sb, messageEvent);
-            selectController.register(data.getId(), i -> {
-                switch (i) {
-                    case 1:
-                        return petController.info(data.getId(), "", messageEvent);
-                    case 2:
-                        return itemController.list(data.getId());
-                    case 3:
-                        return itemController.shop(data.getId());
-                    case 4:
-                        return petController.list(data.getId());
-                }
-                return null;
-            });
+            String sb;
+            if (data.getIsChange()) {
+                sb = data.getName() + "升级了\n" + "等级: +" + data.getLevel() + "\n"
+                        + "经验: +" + data.getExp() + "\n" + "生命: +" + data.getHp() + "\n"
+                        + "攻击: +" + data.getAttack() + "\n" + "防御: +"
+                        + data.getDefense() + "\n" + "速度: +" + data.getSpeed();
+            } else {
+                sb = data.getName() + "获得了" + data.getExp() + "点经验";
+            }
+            CliMain.trySendTo(List.of(sb, Map.of(1, "宠物信息", 2, "背包", 3, "商城", 4, "我的宠物")), messageEvent);
         }
-    }
-
-    private static @NotNull String getRes(PetChangeData data) {
-        String sb;
-        if (data.getIsChange()) {
-            sb = data.getName() + "升级了\n" +
-                    "等级: +" + data.getLevel() + "\n" +
-                    "经验: +" + data.getExp() + "\n" +
-                    "生命: +" + data.getHp() + "\n" +
-                    "攻击: +" + data.getAttack() + "\n" +
-                    "防御: +" + data.getDefense() + "\n" +
-                    "速度: +" + data.getSpeed() + "\n";
-        } else {
-            sb = data.getName() + "获得了" + data.getExp() + "点经验";
-        }
-        sb = sb + "\n\n1.宠物信息  2.背包\n3.商城  4.我的宠物";
-        return sb;
     }
 }

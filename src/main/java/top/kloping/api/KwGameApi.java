@@ -2,6 +2,7 @@ package top.kloping.api;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import io.github.kloping.judge.Judge;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -18,6 +19,10 @@ public abstract class KwGameApi {
     // 通用GET请求
     protected ResponseEntity<String> doGet(String sub, Object... params) {
         return TEMPLATE.getForEntity(buildUrl(sub), String.class, params);
+    }
+
+    protected <T> ResponseEntity<T> doGet(Class<T> cla, String sub, Object... params) {
+        return TEMPLATE.getForEntity(buildUrl(sub), cla, params);
     }
 
     // 通用POST请求
@@ -45,11 +50,23 @@ public abstract class KwGameApi {
         return String.valueOf(filledChar).repeat(Math.max(0, filledLength)) + String.valueOf(emptyChar).repeat(Math.max(0, length - filledLength));
     }
 
-    public Integer getIntOrDefault(String s, Integer defaultValue) {
+    public Integer getIdOrDefault(String s, Integer defaultValue) {
         try {
             return Integer.parseInt(s);
         } catch (Exception e) {
-            return defaultValue;
+            Integer id = toId(s);
+            if (id == null) return defaultValue;
+            else return id;
         }
+    }
+
+    public Integer toId(String name) {
+        if (Judge.isEmpty(name)) return null;
+        Integer id = null;
+        ResponseEntity<Integer> e = TEMPLATE.getForEntity(URL + "/convert/toid?name={name}", Integer.class, name);
+        if (e.getStatusCode().value() == 200) {
+            id = e.getBody();
+        }
+        return id > 0 ? id : null;
     }
 }

@@ -75,8 +75,8 @@ public class PetController {
     }
 
     @Action("宠物信息<.*?=>x>")
-    public String info(Long id, @Param("x") String tx, MessageEvent m) {
-        Integer n = api.getIntOrDefault(tx, null);
+    public Object info(Long id, @Param("x") String tx) {
+        Integer n = api.getIdOrDefault(tx, 1);
         ResponseEntity<String> response = api.info(id, n);
         if (response.getStatusCode().value() == 200) {
             PetWithImage petw = api.convertT(response, PetWithImage.class);
@@ -96,18 +96,13 @@ public class PetController {
             sb.append("🛡️防御: ").append(pet.getDefense()).append("\n");
             sb.append("🎯暴率: ").append(pet.getCritRate()).append("\n");
             sb.append("💥暴伤: ").append(pet.getCritDamage()).append("\n");
-            MessageChainBuilder builder = new MessageChainBuilder();
-            builder.append(new QuoteReply(m.getMessage()));
-            builder.append(Contact.uploadImage(m.getSubject(), new ByteArrayInputStream(bytes)));
-            builder.append(sb.toString().trim());
-            m.getSubject().sendMessage(builder.build());
+            return List.of(bytes, sb.toString().trim());
         } else return response.getBody();
-        return null;
     }
 
     @Action("宠物置顶<.*?=>x>")
     public String topto(Long id, @Param("x") String tx) {
-        Integer n = api.getIntOrDefault(tx, null);
+        Integer n = api.getIdOrDefault(tx, 1);
         ResponseEntity<String> response = api.topto(id, n);
         if (response.getStatusCode().value() == 200) {
             return "置顶成功";

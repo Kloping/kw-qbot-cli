@@ -25,4 +25,12 @@ public class KwGameItemtApi extends KwGameApi {
     public ResponseEntity<String> use(Long id, Integer itemId, Integer count) {
         return doGet("/use?id={id}&itemId={itemId}&count={count}", id, itemId, count);
     }
+
+    public ResponseEntity<String> desc(Integer id) {
+        return doGet("/desc?id={id}", id);
+    }
+
+    public ResponseEntity<byte[]> src(Integer id) {
+        return doGet(byte[].class, "/src?id={id}", id);
+    }
 }

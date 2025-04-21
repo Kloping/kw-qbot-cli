@@ -76,7 +76,7 @@ public class PetWebSocketClient extends StompSessionHandlerAdapter implements Ru
                 TimeUnit.SECONDS.sleep(20);
                 tryConnect();
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.error("链接失败:" + e.getLocalizedMessage());
             }
         });
     }

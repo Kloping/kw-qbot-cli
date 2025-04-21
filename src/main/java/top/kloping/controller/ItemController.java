@@ -14,6 +14,7 @@ import top.kloping.api.dto.ItemForShop;
 import top.kloping.api.dto.UseResult;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -29,7 +30,7 @@ public class ItemController {
     SelectController selectController;
 
     @Action("背包")
-    public String list(Long id) {
+    public Object list(Long id) {
         ResponseEntity<String> data = api.list(id);
         JSONArray array = JSON.parseArray(data.getBody());
         StringBuilder sb = new StringBuilder("🎒 背包 🎒\n");
@@ -40,16 +41,16 @@ public class ItemController {
             if (n > 1) sb.append("✖️").append(n);
             sb.append("\n");
         }
-        return sb.toString();
+        return List.of(sb, Map.of(3, "我的宠物", 2, "商城", 1, "使用"));
     }
 
     @Action("使用<.*?=>x>")
     public String use(Long id, @Param("x") String s) {
         if (!Judge.isEmpty(s)) {
             String[] split = s.split("[xX]");
-            Integer itemId = api.getIntOrDefault(split[0], null);
+            Integer itemId = api.getIdOrDefault(split[0], null);
             Integer count = 1;
-            if (split.length > 1) count = api.getIntOrDefault(split[1], count);
+            if (split.length > 1) count = api.getIdOrDefault(split[1], count);
             if (itemId != null) {
                 ResponseEntity<String> data = api.use(id, itemId, count);
                 UseResult result = api.convertT(data, UseResult.class);
@@ -60,7 +61,7 @@ public class ItemController {
                 }
             }
         }
-        return "🎮 使用示例'使用1001x2'\n表示为使用2个经验本(对置顶宠物使用)";
+        return "🎮 使用示例'使用1001x2'或'使用经验本x2'\n表示为使用2个经验本(对置顶宠物使用)";
     }
 
     @Action("商城")
@@ -70,7 +71,8 @@ public class ItemController {
         StringBuilder sb = new StringBuilder("🛒 商城 🛒\n");
         for (ItemForShop shop : shops) {
             sb.append("🆔 ").append(shop.getSpeciesId()).append(".").append(shop.getName());
-            sb.append("\t\t💰").append(shop.getPrice()).append("/个").append("\t\t📦剩").append(shop.getCount()).append("\n");
+            sb.append("\t\t💰").append(shop.getPrice()).append("/个").append("\t\t📦剩")
+                    .append(shop.getCount()).append("\n");
         }
         return sb.toString();
     }
@@ -79,14 +81,32 @@ public class ItemController {
     public String buy(Long id, @Param("x") String s) {
         if (!Judge.isEmpty(s)) {
             String[] split = s.split("[xX]");
-            Integer itemId = api.getIntOrDefault(split[0], null);
+            Integer itemId = api.getIdOrDefault(split[0], null);
             Integer count = 1;
-            if (split.length > 1) count = api.getIntOrDefault(split[1], count);
+            if (split.length > 1) count = api.getIdOrDefault(split[1], count);
             if (itemId != null) {
                 ResponseEntity<String> data = api.buy(id, itemId, count);
+                if (data.getStatusCode().value() == 200) {
+                    return "✅ 购买成功";
+                }
                 return data.getBody();
             }
         }
-        return "❌ 格式错误\n🛒 购买示例'购买1001x2'\n表示为购买2个经验本";
+        return "❌ 格式错误\n🛒 购买示例'购买1001x2'或'购买经验书x2'\n表示为购买2个经验本";
+    }
+
+    @Action("说明<.*?=>x>")
+    public Object explain(Long id, @Param("x") String s) {
+        if (!Judge.isEmpty(s)) {
+            Integer itemId = api.getIdOrDefault(s, null);
+            ResponseEntity<String> data = api.desc(itemId);
+            if (data.getStatusCode().value() == 200) {
+                ResponseEntity<byte[]> dab = api.src(itemId);
+                return List.of(dab.getBody(), data.getBody());
+            } else {
+                return "❌ 物品不存在";
+            }
+        }
+        return "❌ 格式错误\n🛒 购买示例'说明1001'或'说明经验书'";
     }
 }

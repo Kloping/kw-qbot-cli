@@ -5,17 +5,14 @@ import io.github.kloping.spt.annotations.Action;
 import io.github.kloping.spt.annotations.AutoStand;
 import io.github.kloping.spt.annotations.Controller;
 import io.github.kloping.spt.annotations.Param;
-import io.github.kloping.url.UrlUtils;
-import net.mamoe.mirai.contact.Contact;
-import net.mamoe.mirai.event.events.MessageEvent;
-import net.mamoe.mirai.message.data.MessageChainBuilder;
-import net.mamoe.mirai.message.data.QuoteReply;
 import org.springframework.http.ResponseEntity;
 import top.kloping.api.KwGamePlayerApi;
 import top.kloping.api.dto.DataWithTips;
 import top.kloping.api.entity.Player;
 
-import java.io.ByteArrayInputStream;
+import javax.swing.*;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author github kloping
@@ -44,22 +41,22 @@ public class PlayerController {
     }
 
     @Action("信息")
-    public Object show(Long id, MessageEvent event) {
+    public Object show(Long id) {
         ResponseEntity<String> data = api.show(id);
         if (data.getStatusCode().value() == 200) {
-            return showInfo(event, data);
+            return showInfo(data);
         } else return data.getBody();
     }
 
 
     @Action("改名<.*?=>x>")
-    public String rename(Long id, @Param("x") String text, MessageEvent event) {
+    public String rename(Long id, @Param("x") String text) {
         if (Judge.isEmpty(text)) return "使用‘改名{昵称}’来修改\n名字不可空或超过8个字符";
         selectController.register(id, i -> {
             if (i == 1) {
                 ResponseEntity<String> data = api.rename(id, text);
                 if (data.getStatusCode().value() == 200) {
-                    return showInfo(event, data);
+                    return showInfo(data);
                 } else {
                     return data.getBody();
                 }
@@ -68,30 +65,17 @@ public class PlayerController {
         return "确定修改名为:'" + text + "'吗?\n下次修改时间将是14天后\n回复 1 确认 0 取消";
     }
 
-    @AutoStand
-    PetController petController;
-
     @Action("打工")
-    public String work(Long id,MessageEvent event) {
+    public Object work(Long id) {
         ResponseEntity<String> data = api.work(id);
         if (data.getStatusCode().value() == 200) {
             DataWithTips dw = api.convertT(data, DataWithTips.class);
-            selectController.register(id, (i) -> {
-                switch (i){
-                    case 1:
-                        return show(id, event);
-                    case 2:
-                        return petController.list(id);
-                    default:
-                        return null;
-                }
-            });
-            return dw.toString() + "\n\n1.信息  2.我的宠物";
+            return List.of(dw.toString(), Map.of(1, "信息", 2, "我的宠物"));
         } else return data.getBody();
     }
 
 
-    private Object showInfo(MessageEvent m, ResponseEntity<String> data) {
+    private Object showInfo(ResponseEntity<String> data) {
         Player player = api.convertT(data, Player.class);
         StringBuilder sb = new StringBuilder();
         int exp = Math.toIntExact(player.getExperience());
@@ -109,11 +93,6 @@ public class PlayerController {
         }
         sb.append("]\n").append("💰 金币: ").append(player.getGold());
         sb.append("\n⚡ 体力: ").append(player.getStamina());
-        MessageChainBuilder builder = new MessageChainBuilder();
-        builder.append(new QuoteReply(m.getMessage()));
-        builder.append(Contact.uploadImage(m.getSubject(), new ByteArrayInputStream(UrlUtils.getBytesFromHttpUrl(m.getSender().getAvatarUrl()))));
-        builder.append(sb.toString());
-        m.getSubject().sendMessage(builder.build());
-        return null;
+        return List.of(Icon.class, sb.toString(), Map.of(1, "打工", 2, "领取宠物"));
     }
 }

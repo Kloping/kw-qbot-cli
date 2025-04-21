@@ -7,8 +7,10 @@ import io.github.kloping.spt.annotations.Bean;
 import io.github.kloping.spt.annotations.ComponentScan;
 import io.github.kloping.spt.entity.interfaces.Runner;
 import io.github.kloping.spt.exceptions.NoRunException;
+import io.github.kloping.url.UrlUtils;
 import net.mamoe.mirai.console.terminal.MiraiConsoleImplementationTerminal;
 import net.mamoe.mirai.console.terminal.MiraiConsoleTerminalLoader;
+import net.mamoe.mirai.contact.Contact;
 import net.mamoe.mirai.event.ListenerHost;
 import net.mamoe.mirai.event.events.MessageEvent;
 import net.mamoe.mirai.message.data.MessageChainBuilder;
@@ -22,12 +24,16 @@ import top.kloping.api.KwGameApi;
 import top.kloping.config.LoggerImpl;
 import top.kloping.controller.SelectController;
 
+import javax.swing.*;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @ComponentScan("top.kloping")
 public class CliMain implements ListenerHost, Runner {
@@ -64,7 +70,7 @@ public class CliMain implements ListenerHost, Runner {
             APPLICATION = new StarterObjectApplication(CliMain.class);
             APPLICATION.setAccessTypes(MessageEvent.class, Long.class);
             APPLICATION.setMainKey(Long.class);
-            APPLICATION.setWaitTime(5000);
+            APPLICATION.setWaitTime(7000);
             APPLICATION.setAllAfter(INSTANCE);
             APPLICATION.addConfFile("./conf/conf.txt");
             APPLICATION.logger = LoggerImpl.INSTANCE;
@@ -79,15 +85,77 @@ public class CliMain implements ListenerHost, Runner {
     public void run(Method method, Object t, Object[] objects) throws NoRunException {
         if (t != null && Judge.isNotEmpty(t.toString())) {
             MessageEvent event = (MessageEvent) objects[2];
-            sendToText(t, event);
+            trySendTo(t, event);
         }
     }
 
-    public static void sendToText(Object t, MessageEvent event) {
+    public static void trySendTo(Object t, MessageEvent event) {
+        if (t instanceof String) sendToText(t.toString(), event);
+        else if (t instanceof List) sendToList((List) t, event);
+        else System.err.println("unsupport type: " + t.getClass().getName());
+    }
+
+    private static void sendToList(List t, MessageEvent m) {
+        if (t == null) return;
+        MessageChainBuilder builder = new MessageChainBuilder();
+        builder.append(new QuoteReply(m.getMessage()));
+        for (Object o : t) {
+            if (o == null) {
+                System.err.println("Null element in list");
+                continue;
+            }
+            try {
+                if (o instanceof CharSequence) {
+                    builder.append(o.toString().trim());
+                } else if (o instanceof byte[]) {
+                    builder.append(Contact.uploadImage(m.getSubject(), new ByteArrayInputStream((byte[]) o)));
+                } else if (o instanceof Icon) {
+                    byte[] bytes = UrlUtils.getBytesFromHttpUrl(m.getSender().getAvatarUrl());
+                    builder.append(Contact.uploadImage(
+                            m.getSubject(),
+                            new ByteArrayInputStream(bytes)
+                    ));
+                } else if (o instanceof Map) {
+                    Map<Integer, String> map = (Map<Integer, String>) o;
+                    tryInsertSelect(map, m);
+                    StringBuilder sb = new StringBuilder();
+                    int[] index = {1};
+                    map.entrySet().stream()
+                            .sorted(Map.Entry.comparingByKey())
+                            .forEach(entry -> {
+                                Object key = entry.getKey();
+                                Object value = entry.getValue();
+                                sb.append(key).append(".").append(value);
+                                sb.append(index[0]++ % 2 == 0 ? "\n" : "  ");
+                            });
+
+                    builder.append("\n\n").append(sb.toString().trim());
+                } else {
+                    System.err.println("Unsupported type: " + o.getClass().getName());
+                }
+            } catch (Exception e) {
+                System.err.println("Processing error: " + e.getMessage());
+            }
+        }
+        m.getSubject().sendMessage(builder.build());
+    }
+
+
+    public static void sendToText(String t, MessageEvent event) {
         MessageChainBuilder builder = new MessageChainBuilder();
         builder.append(new QuoteReply(event.getMessage()));
-        builder.append(t.toString().trim());
+        builder.append(t.trim());
         event.getSubject().sendMessage(builder.build());
+    }
+
+    private static void tryInsertSelect(Map<Integer, String> st2ac, MessageEvent event) {
+        selectController.register(event.getSender().getId(), i -> {
+            String content = st2ac.get(i);
+            if (content == null) return null;
+            Long sid = event.getSender().getId();
+            APPLICATION.executeMethod(sid, content, event, sid);
+            return null;
+        });
     }
 
     static Method selectM;

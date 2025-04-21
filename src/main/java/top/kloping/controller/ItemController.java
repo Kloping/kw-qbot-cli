@@ -11,8 +11,10 @@ import io.github.kloping.spt.annotations.Param;
 import org.springframework.http.ResponseEntity;
 import top.kloping.api.KwGameItemtApi;
 import top.kloping.api.dto.ItemForShop;
+import top.kloping.api.dto.ItemWithName;
 import top.kloping.api.dto.UseResult;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -33,15 +35,33 @@ public class ItemController {
     public Object list(Long id) {
         ResponseEntity<String> data = api.list(id);
         JSONArray array = JSON.parseArray(data.getBody());
-        StringBuilder sb = new StringBuilder("🎒 背包 🎒\n");
+        StringBuilder sb = new StringBuilder("🎒 背包 🎒\n🆔.物品名x数量\n");
+        Map<Integer, String> map = new HashMap<>();
+        int i = 1;
         for (Object o : Objects.requireNonNull(array)) {
             JSONObject jo = (JSONObject) o;
-            int n = jo.getInteger("quantity");
-            sb.append("🆔").append(jo.getInteger("speciesId")).append(".").append(jo.getString("name"));
+            ItemWithName iw = jo.toJavaObject(ItemWithName.class);
+            int n = iw.getQuantity();
+            sb.append(iw.getSpeciesId()).append(".").append(iw.getName());
             if (n > 1) sb.append("✖️").append(n);
             sb.append("\n");
+            if (i <= 4) map.put(i++, "使用" + iw.getName());
         }
-        return List.of(sb, Map.of(3, "我的宠物", 2, "商城", 1, "使用"));
+        return List.of(sb, map);
+    }
+
+    @Action("商城")
+    public String shop(Long id) {
+        ResponseEntity<String> data = api.shop(id);
+        List<ItemForShop> shops = api.convertTs(data, ItemForShop.class);
+        StringBuilder sb = new StringBuilder("🛒 商城 🛒\n");
+        sb.append("🆔 .物品名\t\t💰单价\t\t限购\n");
+        for (ItemForShop shop : shops) {
+            sb.append(shop.getSpeciesId()).append(".").append(shop.getName());
+            sb.append("\t\t").append(shop.getPrice()).append("/个").append("\t\t📦剩")
+                    .append(shop.getCount()).append("\n");
+        }
+        return sb.toString();
     }
 
     @Action("使用<.*?=>x>")
@@ -62,19 +82,6 @@ public class ItemController {
             }
         }
         return "🎮 使用示例'使用1001x2'或'使用经验本x2'\n表示为使用2个经验本(对置顶宠物使用)";
-    }
-
-    @Action("商城")
-    public String shop(Long id) {
-        ResponseEntity<String> data = api.shop(id);
-        List<ItemForShop> shops = api.convertTs(data, ItemForShop.class);
-        StringBuilder sb = new StringBuilder("🛒 商城 🛒\n");
-        for (ItemForShop shop : shops) {
-            sb.append("🆔 ").append(shop.getSpeciesId()).append(".").append(shop.getName());
-            sb.append("\t\t💰").append(shop.getPrice()).append("/个").append("\t\t📦剩")
-                    .append(shop.getCount()).append("\n");
-        }
-        return sb.toString();
     }
 
     @Action("购买<.*?=>x>")

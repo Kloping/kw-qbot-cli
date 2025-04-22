@@ -7,7 +7,9 @@ import io.github.kloping.spt.annotations.Controller;
 import io.github.kloping.spt.annotations.Param;
 import org.springframework.http.ResponseEntity;
 import top.kloping.api.KwGamePlayerApi;
+import top.kloping.api.KwGameTaskApi;
 import top.kloping.api.dto.DataWithTips;
+import top.kloping.api.dto.TaskStatus;
 import top.kloping.api.entity.Player;
 
 import javax.swing.*;
@@ -25,6 +27,9 @@ public class PlayerController {
 
     @AutoStand
     SelectController selectController;
+
+    @AutoStand
+    KwGameTaskApi taskApi;
 
     @Action("注册<.*?=>x>")
     public String register(Long id, @Param("x") String text) {
@@ -92,7 +97,25 @@ public class PlayerController {
             else sb.append("░");
         }
         sb.append("]\n").append("💰 金币: ").append(player.getGold());
+        sb.append("\n").append("\uD83D\uDC8E钻石: ").append(player.getDiamond());
         sb.append("\n⚡ 体力: ").append(player.getStamina());
-        return List.of(Icon.class, sb.toString(), Map.of(1, "打工", 2, "领取宠物"));
+        return List.of(Icon.class, sb.toString(), Map.of(1, "打工", 2, "领取宠物", 3, "当前任务"));
+    }
+
+    @Action("当前任务")
+    public Object task(Long id) {
+        ResponseEntity<String> data = taskApi.list(id);
+        if (data.getStatusCode().value() == 200) {
+            List<TaskStatus> list = taskApi.convertTs(data, TaskStatus.class);
+            StringBuilder sb = new StringBuilder();
+            for (TaskStatus taskStatus : list) {
+                sb.append("『").append(taskStatus.getName()).append("』")
+                        .append("\n").append("描述: ").append(taskStatus.getDesc())
+                        .append("\n").append("类型: ").append(taskStatus.getType())
+                        .append("\n").append("奖励: ").append(taskStatus.getReward())
+                        .append("\n\n");
+            }
+            return sb.length() == 0 ? "暂无更多任务\n请等待下次更新" : sb.toString();
+        } else return data.getBody();
     }
 }

@@ -13,6 +13,7 @@ import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
 import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
+import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
 import top.kloping.api.KwGameApi;
@@ -48,13 +49,14 @@ public class PetWebSocketClient extends StompSessionHandlerAdapter implements Ru
         stompClient = new WebSocketStompClient(webSocketClient);
         stompClient.setMessageConverter(new MappingJackson2MessageConverter());
         tryConnect();
-        runnables.forEach(Runnable::run);
     }
 
     private void tryConnect() throws InterruptedException, ExecutionException {
         String url = String.format("ws://%s:%s/ws", server_ip, server_port);
-        stompSession = stompClient.connect(url, this).get();
+        ListenableFuture<StompSession> future = stompClient.connect(url, this);
+        stompSession = future.get();
         stompSession.send("/app/hello", "成功链接!");
+        runnables.forEach(Runnable::run);
     }
 
     public PetWebSocketClient() {

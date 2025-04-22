@@ -44,6 +44,10 @@ public class Player implements Serializable {
      */
     private Integer gold = 1000;
     /**
+     * 钻石
+     */
+    private Integer diamond = 0;
+    /**
      * 最终活跃时间
      */
     private Long lastActive = 0L;

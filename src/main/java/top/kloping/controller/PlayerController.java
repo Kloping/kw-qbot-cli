@@ -38,7 +38,7 @@ public class PlayerController {
             if (i == 1) {
                 ResponseEntity<String> data = api.register(id, text);
                 if (data.getStatusCode().value() == 200) {
-                    return "注册成功,请使用`信息`查看";
+                    return "注册成功,请使用`信息`查看\ntips:优先关注'当前任务'~";
                 } else return data.getBody();
             } else return null;
         });

@@ -11,9 +11,6 @@ import org.springframework.messaging.simp.stomp.StompHeaders;
 import top.kloping.CliMain;
 import top.kloping.PetWebSocketClient;
 import top.kloping.api.dto.PetChangeData;
-import top.kloping.controller.ItemController;
-import top.kloping.controller.PetController;
-import top.kloping.controller.SelectController;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -32,7 +29,7 @@ public class PetService implements StompFrameHandler {
             StompHeaders headers = new StompHeaders();
             headers.setDestination("/topic/pet");
             headers.setId("pet");
-            headers.setHeartbeat(new long[]{10000L,10000L});
+            headers.setHeartbeat(new long[]{10000L, 10000L});
             client.stompSession.subscribe(headers, PetService.this);
         });
     }

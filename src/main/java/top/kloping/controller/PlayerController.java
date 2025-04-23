@@ -97,7 +97,7 @@ public class PlayerController {
             else sb.append("░");
         }
         sb.append("]\n").append("💰 金币: ").append(player.getGold());
-        sb.append("\n").append("\uD83D\uDC8E钻石: ").append(player.getDiamond());
+        sb.append("\n").append("\uD83D\uDC8E 钻石: ").append(player.getDiamond());
         sb.append("\n⚡ 体力: ").append(player.getStamina());
         return List.of(Icon.class, sb.toString(), Map.of(1, "打工", 2, "领取宠物", 3, "当前任务"));
     }

@@ -33,7 +33,6 @@ import java.text.SimpleDateFormat;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @ComponentScan("top.kloping")
 public class CliMain implements ListenerHost, Runner {
@@ -90,7 +89,7 @@ public class CliMain implements ListenerHost, Runner {
     }
 
     public static void trySendTo(Object t, MessageEvent event) {
-        if (t instanceof String) sendToText(t.toString(), event);
+        if (t instanceof String || t instanceof StringBuilder) sendToText(t.toString(), event);
         else if (t instanceof List) sendToList((List) t, event);
         else System.err.println("unsupport type: " + t.getClass().getName());
     }
@@ -109,12 +108,9 @@ public class CliMain implements ListenerHost, Runner {
                     builder.append(o.toString().trim());
                 } else if (o instanceof byte[]) {
                     builder.append(Contact.uploadImage(m.getSubject(), new ByteArrayInputStream((byte[]) o)));
-                } else if (o instanceof Icon) {
+                } else if (o == Icon.class) {
                     byte[] bytes = UrlUtils.getBytesFromHttpUrl(m.getSender().getAvatarUrl());
-                    builder.append(Contact.uploadImage(
-                            m.getSubject(),
-                            new ByteArrayInputStream(bytes)
-                    ));
+                    builder.append(Contact.uploadImage(m.getSubject(), new ByteArrayInputStream(bytes)));
                 } else if (o instanceof Map) {
                     Map<Integer, String> map = (Map<Integer, String>) o;
                     tryInsertSelect(map, m);

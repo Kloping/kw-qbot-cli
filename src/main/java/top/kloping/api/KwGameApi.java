@@ -16,6 +16,10 @@ public abstract class KwGameApi {
 
     protected abstract String getBasePath();
 
+    public ResponseEntity<String> doGetAbs(String url) {
+        return TEMPLATE.getForEntity(URL + url, String.class);
+    }
+
     // 通用GET请求
     protected ResponseEntity<String> doGet(String sub, Object... params) {
         return TEMPLATE.getForEntity(buildUrl(sub), String.class, params);

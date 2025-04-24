@@ -6,12 +6,14 @@ import io.github.kloping.spt.annotations.Action;
 import io.github.kloping.spt.annotations.AutoStand;
 import io.github.kloping.spt.annotations.Controller;
 import io.github.kloping.spt.annotations.Param;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.http.ResponseEntity;
 import top.kloping.api.KwGameItemApi;
 import top.kloping.api.KwGameTravelApi;
 import top.kloping.api.dto.DataWithTips;
 import top.kloping.api.dto.TravelDto;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,20 +48,28 @@ public class TravelController {
             } else {
                 return data.getBody();
             }
-        } else {
-            Map<Integer, String> opt = new HashMap<>();
-            StringBuilder sb = new StringBuilder();
-            int n = 1;
-            for (TravelDto location : api.locations()) {
-
-                sb.append("\n").append(location.getId()).append("🏞️【").append(location.getName()).append("】")
-                        .append("\n\t🔸地形特征：").append(location.getDesc())
-                        .append("\n\t🔸体力消耗：").append(location.getCost()).append("点/次")
-                        .append("\n\t🔸等级要求：Lv.").append(location.getReqLevel());
-
-                if (n <= 4) opt.put(n++, "游历" + location.getId());
-            }
-            return List.of(sb, opt);
         }
+        return showLocations();
+    }
+
+    private @NotNull List<Object> showLocations() {
+        Map<Integer, String> opt = new HashMap<>();
+        int n = 1;
+        List<Object> list = new ArrayList<>();
+        for (TravelDto location : api.locations()) {
+
+            StringBuilder sb = new StringBuilder();
+            byte[] bytes = itemApi.src(location.getId()).getBody();
+            sb.append("\n").append(location.getId()).append("🏞️【").append(location.getName()).append("】")
+                    .append("\n\t🔸地形特征：").append(location.getDesc())
+                    .append("\n\t🔸体力消耗：").append(location.getCost()).append("点/次")
+                    .append("\n\t🔸玩家等级：Lv.").append(location.getReqLevel()).append("\n")
+                    .append("\n\t🔸宠物等级：Lv.").append(location.getReqPetLevel()).append("\n");
+            list.add(bytes);
+            list.add(sb.toString());
+            if (n <= 4) opt.put(n++, "游历" + location.getId());
+        }
+        list.add(opt);
+        return list;
     }
 }

@@ -1,0 +1,16 @@
+package top.kloping.api;
+
+import io.github.kloping.spt.annotations.Entity;
+import org.springframework.http.ResponseEntity;
+
+@Entity
+public class KwGameSkillApi extends KwGameApi {
+    @Override
+    protected String getBasePath() {
+        return "/skill";
+    }
+
+    public ResponseEntity<String> use(Long id, Integer st, Integer tar) {
+        return doGet("/use?pid={id}&st={st}&target={tar}", id, st, tar);
+    }
+}

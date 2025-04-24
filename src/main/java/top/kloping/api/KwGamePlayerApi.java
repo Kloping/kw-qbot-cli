@@ -13,18 +13,18 @@ public class KwGamePlayerApi extends KwGameApi {
     }
 
     public ResponseEntity<String> register(Long id, String name) {
-        return doGet("/register?id={id}&name={name}", id, name);
+        return doGet("/register?pid={id}&name={name}", id, name);
     }
 
     public ResponseEntity<String> show(Long id) {
-        return doGet("/show?id={id}", id);
+        return doGet("/show?pid={id}", id);
     }
 
     public ResponseEntity<String> rename(Long id, String name) {
-        return doPost("/rename", of("id", id, "newName", name));
+        return doPost("/rename", of("pid", id, "newName", name));
     }
 
     public ResponseEntity<String> work(Long id) {
-        return doPost("/work", of("id", id));
+        return doPost("/work", of("pid", id));
     }
 }

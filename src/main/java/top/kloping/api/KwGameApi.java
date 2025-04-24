@@ -81,4 +81,27 @@ public abstract class KwGameApi {
         }
         return id > 0 ? id : null;
     }
+
+    public String toName(Integer id) {
+        ResponseEntity<String> e = TEMPLATE.getForEntity(URL + "/convert/toname?id={id}", String.class, id);
+        if (e.getStatusCode().value() == 200) {
+            return e.getBody();
+        }
+        return "转化失败";
+    }
+
+
+    public ResponseEntity<byte[]> src(Integer id) {
+        ResponseEntity<byte[]> e = TEMPLATE.getForEntity(URL + "/convert/src?id={id}", byte[].class, id);
+        if (e.getStatusCode().value() == 200) {
+            return e;
+        } else return null;
+    }
+
+    public ResponseEntity<byte[]> src(Integer id, Integer level) {
+        ResponseEntity<byte[]> e = TEMPLATE.getForEntity(URL + "/convert/src?id={id}&level={level}", byte[].class, id, level);
+        if (e.getStatusCode().value() == 200) {
+            return e;
+        } else return null;
+    }
 }

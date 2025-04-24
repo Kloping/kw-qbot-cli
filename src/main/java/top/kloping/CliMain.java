@@ -105,7 +105,7 @@ public class CliMain implements ListenerHost, Runner {
             }
             try {
                 if (o instanceof CharSequence) {
-                    builder.append(o.toString().trim());
+                    builder.append(o.toString());
                 } else if (o instanceof byte[]) {
                     builder.append(Contact.uploadImage(m.getSubject(), new ByteArrayInputStream((byte[]) o)));
                 } else if (o == Icon.class) {

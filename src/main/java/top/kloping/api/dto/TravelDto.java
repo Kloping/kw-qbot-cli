@@ -17,4 +17,5 @@ public class TravelDto {
     private String desc;
     private Integer cost;
     private Integer reqLevel;
+    private Integer reqPetLevel;
 }

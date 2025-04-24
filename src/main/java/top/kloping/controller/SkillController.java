@@ -34,9 +34,15 @@ public class SkillController {
                 DataWithTips tips = api.convertT(data, DataWithTips.class);
                 JSONObject jo = (JSONObject) tips.getData();
                 return tips.getTips() + "\n 当前技能点剩余: "
-                        + KwGameApi.getProgressBar(jo.getInteger("skp"),5,5,"○","●");
+                        + KwGameApi.getProgressBar(jo.getInteger("skp"), 5, 5, "○", "●");
             } else return data.getBody();
         }
         return "❌ 格式错误\n示例: 技能1x2\n表示为向的对局2号为释放技能1";
+    }
+
+    @Action("放弃")
+    public Object giveUp(Long pid) {
+        ResponseEntity<String> entity = api.giveUp(pid);
+        return entity.getBody();
     }
 }

@@ -13,4 +13,8 @@ public class KwGameSkillApi extends KwGameApi {
     public ResponseEntity<String> use(Long id, Integer st, Integer tar) {
         return doGet("/use?pid={id}&st={st}&target={tar}", id, st, tar);
     }
+
+    public ResponseEntity<String> giveUp(Long id) {
+        return doGet("/giveup?pid={id}", id);
+    }
 }

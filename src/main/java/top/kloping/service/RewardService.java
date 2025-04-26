@@ -49,8 +49,10 @@ public class RewardService implements StompFrameHandler {
     public void handleFrame(StompHeaders headers, Object payload) {
         RewardItem rewardItem = (RewardItem) payload;
         MessageEvent messageEvent = records.get(rewardItem.getPid());
+        StringBuilder sb = new StringBuilder("获得奖励:\n");
+        sb.append(rewardItem.isWin() ? "对局获胜\n" : "对局未成功\n");
+        sb.append(rewardItem.getTips()).append("\n");
         if (messageEvent != null) {
-            StringBuilder sb = new StringBuilder("获得奖励:\n");
             for (int[] ints : rewardItem.getIdcount()) {
                 sb.append("> ").append(api.toName(ints[0])).append("x").append(ints[1]).append("\n");
             }

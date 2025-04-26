@@ -35,6 +35,7 @@ public class ItemController {
     @Action("背包")
     public Object list(Long id) {
         ResponseEntity<String> data = api.list(id);
+        if (data.getStatusCode().value() != 200) return data.getBody();
         JSONArray array = JSON.parseArray(data.getBody());
         StringBuilder sb = new StringBuilder("🎒 背包 🎒\n🆔.物品名x数量\n");
         Map<Integer, String> map = new HashMap<>();
@@ -55,6 +56,7 @@ public class ItemController {
     @Action("商城")
     public String shop(Long id) {
         ResponseEntity<String> data = api.shop(id);
+        if (data.getStatusCode().value() != 200) return data.getBody();
         List<ItemForShop> shops = api.convertTs(data, ItemForShop.class);
         StringBuilder sb = new StringBuilder("🛒 商城 🛒\n");
         sb.append("🆔 .物品名\t\t💰单价\t\t限购\n");

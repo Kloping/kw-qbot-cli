@@ -13,6 +13,7 @@ import net.mamoe.mirai.console.terminal.MiraiConsoleTerminalLoader;
 import net.mamoe.mirai.contact.Contact;
 import net.mamoe.mirai.event.ListenerHost;
 import net.mamoe.mirai.event.events.MessageEvent;
+import net.mamoe.mirai.message.data.Message;
 import net.mamoe.mirai.message.data.MessageChainBuilder;
 import net.mamoe.mirai.message.data.QuoteReply;
 import org.jetbrains.annotations.NotNull;
@@ -77,6 +78,7 @@ public class CliMain implements ListenerHost, Runner {
             APPLICATION.logger.setLogLevel(1);
             APPLICATION.logger.setFormat(new SimpleDateFormat("yyy/MM/dd HH:mm:ss:SSS"));
             APPLICATION.run0(CliMain.class);
+            APPLICATION.INSTANCE.getContextManager().append(event.getBot());
         }
     }
 
@@ -126,6 +128,8 @@ public class CliMain implements ListenerHost, Runner {
                             });
 
                     builder.append("\n\n").append(sb.toString().trim());
+                } else if (o instanceof Message) {
+                    builder.append((Message) o);
                 } else {
                     System.err.println("Unsupported type: " + o.getClass().getName());
                 }

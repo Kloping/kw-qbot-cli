@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.http.ResponseEntity;
 import top.kloping.api.KwGameItemApi;
 import top.kloping.api.KwGameTravelApi;
+import top.kloping.api.SrcRegistry;
 import top.kloping.api.dto.DataWithTips;
 import top.kloping.api.dto.TravelDto;
 
@@ -30,6 +31,9 @@ public class TravelController {
     @AutoStand
     KwGameItemApi itemApi;
 
+    @AutoStand
+    SrcRegistry registry;
+
     @Action("游历<.*?=>x>")
     public Object explore(Long pid, @Param("x") String s) {
         if (!Judge.isEmpty(s)) {
@@ -40,8 +44,8 @@ public class TravelController {
                 JSONObject jo = (JSONObject) dataWithTips.getData();
                 Integer itemId = jo.getInteger("id");
                 if (itemId != null) {
-                    byte[] bytes = itemApi.src(itemId).getBody();
-                    return List.of(bytes, dataWithTips.getTips(), Map.of(1, "背包", 2, "信息", 3, "游历", 4, "宠物信息"));
+                    return List.of(registry.getImage(itemId),
+                            dataWithTips.getTips(), Map.of(1, "背包", 2, "信息", 3, "游历", 4, "宠物信息"));
                 } else {
                     return dataWithTips.getTips();
                 }
@@ -59,13 +63,12 @@ public class TravelController {
         for (TravelDto location : api.locations()) {
 
             StringBuilder sb = new StringBuilder();
-            byte[] bytes = itemApi.src(location.getId()).getBody();
             sb.append("\n").append(location.getId()).append("🏞️【").append(location.getName()).append("】")
                     .append("\n\t🔸地形特征：").append(location.getDesc())
                     .append("\n\t🔸体力消耗：").append(location.getCost()).append("点/次")
                     .append("\n\t🔸玩家等级：Lv.").append(location.getReqLevel())
                     .append("\n\t🔸宠物等级：Lv.").append(location.getReqPetLevel()).append("\n");
-            list.add(bytes);
+            list.add(registry.getImage(location.getId()));
             list.add(sb.toString());
             if (n <= 4) opt.put(n++, "游历" + location.getId());
         }

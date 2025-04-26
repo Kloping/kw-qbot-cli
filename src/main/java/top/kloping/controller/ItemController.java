@@ -10,6 +10,7 @@ import io.github.kloping.spt.annotations.Controller;
 import io.github.kloping.spt.annotations.Param;
 import org.springframework.http.ResponseEntity;
 import top.kloping.api.KwGameItemApi;
+import top.kloping.api.SrcRegistry;
 import top.kloping.api.dto.ItemForShop;
 import top.kloping.api.dto.ItemWithName;
 import top.kloping.api.dto.UseResult;
@@ -115,14 +116,16 @@ public class ItemController {
         return "❌ 格式错误\n🛒 购买示例'购买1001x2'或'购买经验书x2'\n表示为购买2个经验本";
     }
 
+    @AutoStand
+    SrcRegistry registry;
+
     @Action("说明<.*?=>x>")
     public Object explain(Long id, @Param("x") String s) {
         if (!Judge.isEmpty(s)) {
             Integer itemId = api.getIdOrDefault(s, null);
             ResponseEntity<String> data = api.desc(itemId);
             if (data.getStatusCode().value() == 200) {
-                ResponseEntity<byte[]> dab = api.src(itemId);
-                return List.of(dab.getBody(), data.getBody());
+                return List.of(registry.getImage(itemId), data.getBody());
             } else {
                 return "❌ 物品不存在";
             }

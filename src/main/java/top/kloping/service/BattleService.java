@@ -11,6 +11,7 @@ import org.springframework.messaging.simp.stomp.StompHeaders;
 import top.kloping.CliMain;
 import top.kloping.PetWebSocketClient;
 import top.kloping.api.KwGameApi;
+import top.kloping.api.SrcRegistry;
 import top.kloping.api.dto.BattleStatus;
 
 import java.lang.reflect.Type;
@@ -46,7 +47,7 @@ public class BattleService implements StompFrameHandler {
     Map<Long, MessageEvent> records;
 
     @AutoStand
-    KwGameApi api;
+    SrcRegistry registry;
 
     @Override
     public void handleFrame(StompHeaders headers, Object payload) {
@@ -54,14 +55,10 @@ public class BattleService implements StompFrameHandler {
         MessageEvent messageEvent = records.get(battleStatus.getPid());
         List<Object> list = new ArrayList();
         if (messageEvent != null) {
-            byte[] bytes = null;
             list.add(battleStatus.getTips() + "\n位置 名字 血量\n");
             for (Integer loc : battleStatus.getMonsters()) {
                 BattleStatus.Character v = battleStatus.getLocationMap().get(loc);
-                if (bytes == null) {
-                    bytes = api.src(v.getId()).getBody();
-                    list.add(bytes);
-                }
+                list.add(registry.getImage(v.getId()));
                 StringBuilder sb = new StringBuilder();
                 sb.append(getN(loc)).append(".").append(v.getName()).append(" Lv.").append(v.getLevel()).append("\n").append(
                         KwGameApi.getProgressBar(v.getHpb(), 100, 9, "⬜", "\uD83D\uDFE6")
@@ -69,13 +66,9 @@ public class BattleService implements StompFrameHandler {
                 list.add(sb.toString());
             }
             list.add("------VS-------\n");
-            byte[] bytes1 = null;
             for (Integer pet : battleStatus.getPets()) {
                 BattleStatus.Character v = battleStatus.getLocationMap().get(pet);
-                if (bytes1 == null) {
-                    bytes1 = api.src(v.getId(), v.getLevel()).getBody();
-                    list.add(bytes1);
-                }
+                list.add(registry.getImage(v.getId() + "_" + v.getLevel()));
                 StringBuilder sb = new StringBuilder();
                 sb.append(getN(pet)).append(".").append(v.getName()).append(" Lv.").append(v.getLevel()).append("\n").append(
                         KwGameApi.getProgressBar(v.getHpb(), 100, 9, "⬜", "\uD83D\uDFE9")

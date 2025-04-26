@@ -10,6 +10,11 @@ import org.springframework.http.ResponseEntity;
 import top.kloping.api.KwGameApi;
 import top.kloping.api.KwGameSkillApi;
 import top.kloping.api.dto.DataWithTips;
+import top.kloping.api.dto.EquipPet;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author github kloping
@@ -44,5 +49,25 @@ public class SkillController {
     public Object giveUp(Long pid) {
         ResponseEntity<String> entity = api.giveUp(pid);
         return entity.getBody();
+    }
+
+    @Action("宠物装备")
+    public Object equip(Long pid) {
+        ResponseEntity<String> entity = api.equips(pid);
+        if (entity.getStatusCode().value() != 200) return entity.getBody();
+        EquipPet equipPet = api.convertT(entity, EquipPet.class);
+        List<Object> list = new ArrayList<>();
+        byte[] bytes = api.src(equipPet.getPetId(), equipPet.getLevel()).getBody();
+        list.add(bytes);
+        String name = api.toName(equipPet.getPetId());
+        StringBuilder sb = new StringBuilder(name);
+        int i = 1;
+        for (EquipPet.EquipData equipData : equipPet.getEquipData()) {
+            sb.append("\n技能").append(i).append(": ").append(equipData.getName())
+                    .append("\n\t ").append(equipData.getDesc());
+        }
+        list.add(sb);
+        list.add(Map.of(1, "宠物信息", 2, "背包"));
+        return list;
     }
 }

@@ -5,18 +5,14 @@ import io.github.kloping.spt.annotations.Action;
 import io.github.kloping.spt.annotations.AutoStand;
 import io.github.kloping.spt.annotations.Controller;
 import io.github.kloping.spt.annotations.Param;
-import net.mamoe.mirai.contact.Contact;
-import net.mamoe.mirai.event.events.MessageEvent;
-import net.mamoe.mirai.message.data.MessageChainBuilder;
-import net.mamoe.mirai.message.data.QuoteReply;
 import org.springframework.http.ResponseEntity;
 import top.kloping.api.KwGamePetApi;
 import top.kloping.api.dto.PetWithImage;
 import top.kloping.api.entity.Pet;
 
-import java.io.ByteArrayInputStream;
 import java.util.Base64;
 import java.util.List;
+import java.util.Map;
 
 import static top.kloping.api.KwGameApi.getProgressBar;
 
@@ -95,8 +91,8 @@ public class PetController {
             sb.append("⚔️攻击: ").append(pet.getAttack()).append("\n");
             sb.append("🛡️防御: ").append(pet.getDefense()).append("\n");
             sb.append("🎯暴率: ").append(pet.getCritRate()).append("\n");
-            sb.append("💥暴伤: ").append(pet.getCritDamage()).append("\n");
-            return List.of(bytes, sb.toString().trim());
+            sb.append("💥暴伤: ").append(pet.getCritDamage());
+            return List.of(bytes, sb, Map.of(1, "宠物装备", 2, "背包"));
         } else return response.getBody();
     }
 
@@ -104,9 +100,7 @@ public class PetController {
     public String topto(Long id, @Param("x") String tx) {
         Integer n = api.getIdOrDefault(tx, 1);
         ResponseEntity<String> response = api.topto(id, n);
-        if (response.getStatusCode().value() == 200) {
-            return "置顶成功";
-        }
+        if (response.getStatusCode().value() == 200) return "置顶成功";
         return response.getBody();
     }
 

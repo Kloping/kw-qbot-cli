@@ -63,7 +63,7 @@ public class TravelController {
             sb.append("\n").append(location.getId()).append("🏞️【").append(location.getName()).append("】")
                     .append("\n\t🔸地形特征：").append(location.getDesc())
                     .append("\n\t🔸体力消耗：").append(location.getCost()).append("点/次")
-                    .append("\n\t🔸玩家等级：Lv.").append(location.getReqLevel()).append("\n")
+                    .append("\n\t🔸玩家等级：Lv.").append(location.getReqLevel())
                     .append("\n\t🔸宠物等级：Lv.").append(location.getReqPetLevel()).append("\n");
             list.add(bytes);
             list.add(sb.toString());

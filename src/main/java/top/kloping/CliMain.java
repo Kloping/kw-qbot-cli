@@ -51,6 +51,7 @@ public class CliMain implements ListenerHost, Runner {
 
     @net.mamoe.mirai.event.EventHandler
     public void on(net.mamoe.mirai.event.events.GroupMessageEvent event) {
+        if (event.getSubject().getId() != 764663035L && event.getSubject().getId() != 1041541077L) return;
         String text = event.getMessage().contentToString();
         Long sid = event.getSender().getId();
         APPLICATION.executeMethod(sid, text, event, sid);

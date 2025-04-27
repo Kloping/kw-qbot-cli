@@ -60,9 +60,14 @@ public class BattleService implements StompFrameHandler {
                 BattleStatus.Character v = battleStatus.getLocationMap().get(loc);
                 list.add(registry.getImage(v.getId()));
                 StringBuilder sb = new StringBuilder();
-                sb.append(getN(loc)).append(".").append(v.getName()).append(" Lv.").append(v.getLevel()).append("\n").append(
-                        KwGameApi.getProgressBar(v.getHpb(), 100, 9, "⬜", "\uD83D\uDFE6")
-                ).append("\n");
+                sb.append(getN(loc)).append(".").append(v.getName()).append(" Lv.").append(v.getLevel())
+                        .append(v.getHpc() >= 0 ? " \t+" : " \t").append(v.getHpc()).append("\n")
+                        .append(KwGameApi.getProgressBar(v.getHpb(), 100, 9, "⬜", "\uD83D\uDFE6"))
+                        .append("\n");
+                String bufftips = v.getBufftips();
+                if (bufftips != null && !bufftips.isEmpty()) {
+                    sb.append(bufftips).append("\n");
+                }
                 list.add(sb.toString());
             }
             list.add("------VS-------\n");
@@ -70,16 +75,20 @@ public class BattleService implements StompFrameHandler {
                 BattleStatus.Character v = battleStatus.getLocationMap().get(pet);
                 list.add(registry.getImage(v.getId() + "_" + v.getLevel()));
                 StringBuilder sb = new StringBuilder();
-                sb.append(getN(pet)).append(".").append(v.getName()).append(" Lv.").append(v.getLevel()).append("\n").append(
-                        KwGameApi.getProgressBar(v.getHpb(), 100, 9, "⬜", "\uD83D\uDFE9")
-                ).append("\n");
+                sb.append(getN(pet)).append(".").append(v.getName()).append(" Lv.").append(v.getLevel())
+                        .append(v.getHpc() >= 0 ? " \t+" : " \t").append(v.getHpc()).append("\n")
+                        .append(KwGameApi.getProgressBar(v.getHpb(), 100, 9, "⬜", "\uD83D\uDFE9")).append("\n");
+                String bufftips = v.getBufftips();
+                if (bufftips != null && !bufftips.isEmpty()) {
+                    sb.append(bufftips).append("\n");
+                }
                 list.add(sb.toString());
             }
             StringBuilder sb = new StringBuilder();
             sb.append("------行动值------");
             battleStatus.getActionQueue().forEach((k, loc) -> {
                 BattleStatus.Character v = battleStatus.getLocationMap().get(loc);
-                sb.append("\n> ").append(k).append(" ").append(v.getName());
+                sb.append("\n> ").append(k).append(" ").append(v.getName()).append(v.getControlled() > 0 ? "(被控)" : "");
             });
             list.add(sb.toString());
             sb.delete(0, sb.length());

@@ -58,6 +58,18 @@ public class BattleStatus {
          * 等级
          */
         private Integer level;
+        /**
+         * buff效果
+         */
+        private String bufftips;
+        /**
+         * 血量变化
+         */
+        private Integer hpc;
+        /**
+         * 受控
+         */
+        private Integer controlled;
     }
 
     @Data

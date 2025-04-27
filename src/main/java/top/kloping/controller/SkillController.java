@@ -63,7 +63,7 @@ public class SkillController {
         StringBuilder sb = new StringBuilder(name);
         int i = 1;
         for (EquipPet.EquipData equipData : equipPet.getEquipData()) {
-            sb.append("\n技能").append(i).append(": ").append(equipData.getName())
+            sb.append("\n技能").append(i++).append(": ").append(equipData.getName())
                     .append("\n\t ").append(equipData.getDesc());
         }
         list.add(sb);

@@ -68,6 +68,7 @@ public class SkillController {
         int i = 1;
         for (EquipPet.EquipData equipData : equipPet.getEquipData()) {
             sb.append("\n技能").append(i++).append(": ").append(equipData.getName())
+                    .append(" [").append(equipData.getType()).append("]技能")
                     .append("\n\t ").append(equipData.getDesc());
         }
         list.add(sb);

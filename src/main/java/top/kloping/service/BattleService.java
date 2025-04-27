@@ -56,33 +56,23 @@ public class BattleService implements StompFrameHandler {
         List<Object> list = new ArrayList();
         if (messageEvent != null) {
             list.add(battleStatus.getTips() + "\n位置 名字 血量\n");
+            int x = 1;
             for (Integer loc : battleStatus.getMonsters()) {
                 BattleStatus.Character v = battleStatus.getLocationMap().get(loc);
-                list.add(registry.getImage(v.getId()));
-                StringBuilder sb = new StringBuilder();
-                sb.append(getN(loc)).append(".").append(v.getName()).append(" Lv.").append(v.getLevel())
-                        .append(v.getHpc() >= 0 ? " \t+" : " \t").append(v.getHpc()).append("\n")
-                        .append(KwGameApi.getProgressBar(v.getHpb(), 100, 9, "⬜", "\uD83D\uDFE6"))
-                        .append("\n");
-                String bufftips = v.getBufftips();
-                if (bufftips != null && !bufftips.isEmpty()) {
-                    sb.append(bufftips).append("\n");
+                if (x == 1) {
+                    x = 2;
+                    list.add(registry.getImage(v.getId()));
                 }
-                list.add(sb.toString());
+                loc2view(loc, v, "\uD83D\uDFE6", list);
             }
             list.add("------VS-------\n");
             for (Integer pet : battleStatus.getPets()) {
                 BattleStatus.Character v = battleStatus.getLocationMap().get(pet);
-                list.add(registry.getImage(v.getId() + "_" + v.getLevel()));
-                StringBuilder sb = new StringBuilder();
-                sb.append(getN(pet)).append(".").append(v.getName()).append(" Lv.").append(v.getLevel())
-                        .append(v.getHpc() >= 0 ? " \t+" : " \t").append(v.getHpc()).append("\n")
-                        .append(KwGameApi.getProgressBar(v.getHpb(), 100, 9, "⬜", "\uD83D\uDFE9")).append("\n");
-                String bufftips = v.getBufftips();
-                if (bufftips != null && !bufftips.isEmpty()) {
-                    sb.append(bufftips).append("\n");
+                if (x == 2) {
+                    x = 3;
+                    list.add(registry.getImage(v.getId() + "_" + v.getLevel()));
                 }
-                list.add(sb.toString());
+                loc2view(pet, v, "\uD83D\uDFE9", list);
             }
             StringBuilder sb = new StringBuilder();
             sb.append("------行动值------");
@@ -97,14 +87,32 @@ public class BattleService implements StompFrameHandler {
                 sb.append("\n").append(v.getBname()).append(" ").append(v.getOpt()).append(" <").append(v.getAname());
             });
             list.add(sb.toString());
+            //添加选项
             Map<Integer, String> opts = new HashMap<>();
-            int i = 1;
+            int index = 1;
             for (String mayopt : battleStatus.getMayopts()) {
-                opts.put(i++, mayopt);
+                opts.put(index++, mayopt);
             }
             list.add(opts);
             CliMain.trySendTo(list, messageEvent);
         } else log.error("当接收广播时未找到消息事件 {}", JSON.toJSON(payload));
+    }
+
+    private void loc2view(Integer loc, BattleStatus.Character v, String filledChar, List<Object> list) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getN(loc)).append(".").append(v.getName()).append(" Lv.").append(v.getLevel())
+                .append(v.getHpc() >= 0 ? " \t+" : " \t").append(v.getHpc()).append("hp\n")
+                .append(KwGameApi.getProgressBar(v.getHpb(), 100, 9, "⬜", filledChar));
+
+        if (v.getShieldb() > 0)
+            sb.append("\uD83D\uDEE1\uFE0F: ").append(v.getShieldb()).append("%");
+        sb.append("\n");
+
+        String bufftips = v.getBufftips();
+        if (bufftips != null && !bufftips.isEmpty()) {
+            sb.append(bufftips).append("\n");
+        }
+        list.add(sb.toString());
     }
 
     private String getN(Integer k) {

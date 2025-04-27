@@ -11,6 +11,7 @@ import org.springframework.messaging.simp.stomp.StompHeaders;
 import top.kloping.CliMain;
 import top.kloping.PetWebSocketClient;
 import top.kloping.api.KwGameApi;
+import top.kloping.api.KwGameConvertApi;
 import top.kloping.api.dto.RewardItem;
 
 import java.lang.reflect.Type;
@@ -43,7 +44,7 @@ public class RewardService implements StompFrameHandler {
     Map<Long, MessageEvent> records;
 
     @AutoStand
-    KwGameApi api;
+    KwGameConvertApi api;
 
     @Override
     public void handleFrame(StompHeaders headers, Object payload) {

@@ -49,9 +49,14 @@ public abstract class KwGameApi {
     }
 
     public static String getProgressBar(int current, int total, int length, String emptyChar, String filledChar) {
-        int filledLength = (int) Math.round((double) current / total * length);
-        filledLength = Math.min(filledLength, length);
+        int filledLength = getFilledLength((double) current, total, length);
         return String.valueOf(filledChar).repeat(Math.max(0, filledLength)) + String.valueOf(emptyChar).repeat(Math.max(0, length - filledLength));
+    }
+
+    public static int getFilledLength(double current, int total, int length) {
+        int filledLength = (int) Math.round(current / total * length);
+        filledLength = Math.min(filledLength, length);
+        return filledLength;
     }
 
     public Integer getIdOrDefault(String s, Integer defaultValue) {
@@ -82,15 +87,6 @@ public abstract class KwGameApi {
         return id > 0 ? id : null;
     }
 
-    public String toName(Integer id) {
-        ResponseEntity<String> e = TEMPLATE.getForEntity(URL + "/convert/toname?id={id}", String.class, id);
-        if (e.getStatusCode().value() == 200) {
-            return e.getBody();
-        }
-        return "转化失败";
-    }
-
-
     public ResponseEntity<byte[]> src(Integer id) {
         ResponseEntity<byte[]> e = TEMPLATE.getForEntity(URL + "/convert/src?id={id}", byte[].class, id);
         if (e.getStatusCode().value() == 200) {
@@ -104,4 +100,6 @@ public abstract class KwGameApi {
             return e;
         } else return null;
     }
+
+
 }

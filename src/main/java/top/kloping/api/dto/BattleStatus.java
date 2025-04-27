@@ -47,6 +47,10 @@ public class BattleStatus {
          */
         private Integer hpb;
         /**
+         * 护盾百分比
+         */
+        private Integer shieldb;
+        /**
          * 几条命
          */
         private Integer lifes;

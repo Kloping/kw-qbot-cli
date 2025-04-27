@@ -29,8 +29,4 @@ public class KwGameItemApi extends KwGameApi {
         return doGet("/use?pid={id}&itemId={itemId}&count={count}", id, itemId, count);
     }
 
-    public ResponseEntity<String> desc(Integer id) {
-        return doGet("/desc?id={id}", id);
-    }
-
 }

@@ -17,8 +17,8 @@ import java.util.Map;
  */
 @Entity
 public class SrcRegistry {
-    private Map<Integer, Image> id2image = new HashMap<>();
-    private Map<String, Image> url2image = new HashMap<>();
+    private final Map<Integer, Image> id2image = new HashMap<>();
+    private final Map<String, Image> url2image = new HashMap<>();
 
     @AutoStand
     KwGameApi api;

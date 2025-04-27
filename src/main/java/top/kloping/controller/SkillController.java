@@ -8,6 +8,7 @@ import io.github.kloping.spt.annotations.Controller;
 import io.github.kloping.spt.annotations.Param;
 import org.springframework.http.ResponseEntity;
 import top.kloping.api.KwGameApi;
+import top.kloping.api.KwGameConvertApi;
 import top.kloping.api.KwGameSkillApi;
 import top.kloping.api.dto.DataWithTips;
 import top.kloping.api.dto.EquipPet;
@@ -24,6 +25,9 @@ import java.util.Map;
 public class SkillController {
     @AutoStand
     private KwGameSkillApi api;
+
+    @AutoStand
+    private KwGameConvertApi convertApi;
 
     @Action("技能<.*?=>x>")
     public Object skill(Long pid, @Param("x") String s) {
@@ -59,7 +63,7 @@ public class SkillController {
         List<Object> list = new ArrayList<>();
         byte[] bytes = api.src(equipPet.getPetId(), equipPet.getLevel()).getBody();
         list.add(bytes);
-        String name = api.toName(equipPet.getPetId());
+        String name = convertApi.toName(equipPet.getPetId());
         StringBuilder sb = new StringBuilder(name);
         int i = 1;
         for (EquipPet.EquipData equipData : equipPet.getEquipData()) {

@@ -31,4 +31,7 @@ public class KwGamePetApi extends KwGameApi {
         return doGet("/available?pid={id}", id);
     }
 
+    public ResponseEntity<String> breakthrough(Long id, Integer n) {
+        return doGet("/breakthrough?pid={id}&n={n}", id, n);
+    }
 }

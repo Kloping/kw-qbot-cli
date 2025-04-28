@@ -51,12 +51,14 @@ public class PetWebSocketClient extends StompSessionHandlerAdapter implements Ru
         tryConnect();
     }
 
-    private void tryConnect() throws InterruptedException, ExecutionException {
-        String url = String.format("ws://%s:%s/ws", server_ip, server_port);
-        ListenableFuture<StompSession> future = stompClient.connect(url, this);
-        stompSession = future.get();
-        stompSession.send("/app/hello", "成功链接!");
-        runnables.forEach(Runnable::run);
+    public void tryConnect() throws InterruptedException, ExecutionException {
+        if (stompSession == null || !stompSession.isConnected()) {
+            String url = String.format("ws://%s:%s/ws", server_ip, server_port);
+            ListenableFuture<StompSession> future = stompClient.connect(url, this);
+            stompSession = future.get();
+            stompSession.send("/app/hello", "成功链接!");
+            runnables.forEach(Runnable::run);
+        }
     }
 
     public PetWebSocketClient() {

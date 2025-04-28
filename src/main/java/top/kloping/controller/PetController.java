@@ -92,7 +92,7 @@ public class PetController {
             sb.append("🛡️防御: ").append(pet.getDefense()).append("\n");
             sb.append("🎯暴率: ").append(pet.getCritRate()).append("\n");
             sb.append("💥暴伤: ").append(pet.getCritDamage());
-            return List.of(bytes, sb, Map.of(1, "宠物装备", 2, "背包"));
+            return List.of(bytes, sb, Map.of(1, "宠物装备", 2, "背包",3,"等级突破"));
         } else return response.getBody();
     }
 
@@ -104,4 +104,11 @@ public class PetController {
         return response.getBody();
     }
 
+    @Action("等级突破")
+    public String breakthrough(Long id) {
+        ResponseEntity<String> response = api.breakthrough(id, 1);
+        if (response.getStatusCode().value() == 200) {
+            return response.getBody();
+        } else return response.getBody();
+    }
 }

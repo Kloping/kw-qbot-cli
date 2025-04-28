@@ -48,6 +48,8 @@ public class CliMain implements ListenerHost, Runner {
 
     @AutoStand
     private static SelectController selectController;
+    @AutoStand
+    public static PetWebSocketClient client;
 
     @net.mamoe.mirai.event.EventHandler
     public void on(net.mamoe.mirai.event.events.GroupMessageEvent event) {

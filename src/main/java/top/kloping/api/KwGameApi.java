@@ -6,8 +6,10 @@ import io.github.kloping.judge.Judge;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import top.kloping.CliMain;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public abstract class KwGameApi {
 
@@ -22,15 +24,30 @@ public abstract class KwGameApi {
 
     // 通用GET请求
     protected ResponseEntity<String> doGet(String sub, Object... params) {
+        try {
+            CliMain.client.tryConnect();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return TEMPLATE.getForEntity(buildUrl(sub), String.class, params);
     }
 
     protected <T> ResponseEntity<T> doGet(Class<T> cla, String sub, Object... params) {
+        try {
+            CliMain.client.tryConnect();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return TEMPLATE.getForEntity(buildUrl(sub), cla, params);
     }
 
     // 通用POST请求
     protected ResponseEntity<String> doPost(String sub, MultiValueMap<String, Object> params) {
+        try {
+            CliMain.client.tryConnect();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return TEMPLATE.postForEntity(buildUrl(sub), params, String.class);
     }
 

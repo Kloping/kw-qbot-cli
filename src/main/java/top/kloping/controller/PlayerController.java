@@ -10,6 +10,7 @@ import top.kloping.api.KwGamePlayerApi;
 import top.kloping.api.KwGameTaskApi;
 import top.kloping.api.dto.DataWithTips;
 import top.kloping.api.dto.TaskStatus;
+import top.kloping.api.dto.TeamDto;
 import top.kloping.api.entity.Player;
 
 import javax.swing.*;
@@ -99,7 +100,8 @@ public class PlayerController {
         sb.append("]\n").append("💰 金币: ").append(player.getGold());
         sb.append("\n").append("\uD83D\uDC8E 钻石: ").append(player.getDiamond());
         sb.append("\n⚡ 体力: ").append(player.getStamina());
-        return List.of(Icon.class, sb.toString(), Map.of(1, "打工", 2, "领取宠物", 3, "当前任务"));
+        return List.of(Icon.class, sb.toString()
+                , Map.of(1, "打工", 2, "领取宠物", 3, "当前任务", 4, "宠物信息"));
     }
 
     @Action("当前任务")
@@ -117,5 +119,34 @@ public class PlayerController {
             }
             return sb.length() == 0 ? "暂无更多任务\n请等待下次更新" : sb.toString();
         } else return data.getBody();
+    }
+
+    //组队
+    @Action("组队<.*?=>x>")
+    public String team(Long id, @Param("x") String text) {
+        if (!Judge.isEmpty(text)) {
+            int i = text.indexOf("@");
+            if (i >= 0) {
+                String stid = text.substring(i + 1).trim();
+                Long tid = Long.valueOf(stid);
+                ResponseEntity<String> en = api.team(id, tid);
+                if (en.getStatusCode().value() == 200) {
+                    return en.getBody();
+                } else return en.getBody();
+            }
+        }
+        ResponseEntity<String> en = api.team(id);
+        if (en.getStatusCode().value() == 200) {
+            TeamDto teamDto = api.convertT(en, TeamDto.class);
+            return teamDto.toString();
+        } else return "组队用法: '组队@某人'\n组队后可给予物品(2人)\n组队后可一起游历打怪\n当前:" + en.getBody();
+    }
+
+    @Action("退出组队")
+    public String quitTeam(Long id) {
+        ResponseEntity<String> en = api.quitTeam(id);
+        if (en.getStatusCode().value() == 200) {
+            return en.getBody();
+        } else return en.getBody();
     }
 }

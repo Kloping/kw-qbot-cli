@@ -58,8 +58,11 @@ public class CliMain implements ListenerHost, Runner {
         Long sid = event.getSender().getId();
         APPLICATION.executeMethod(sid, text, event, sid);
         if (text.matches("\\d+")) {
-            Object t = selectController.select(sid, Integer.valueOf(text));
-            run(selectM, t, new Object[]{sid, text, event});
+            int i = Integer.parseInt(text);
+            if (i >= 0 && i <= 10) {
+                Object t = selectController.select(sid, i);
+                run(selectM, t, new Object[]{sid, text, event});
+            }
         }
         records.put(sid, event);
     }

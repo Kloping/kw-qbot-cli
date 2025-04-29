@@ -142,4 +142,22 @@ public class ItemController {
         }
         return "❌ 格式错误\n🛒 购买示例'说明1001'或'说明经验书'";
     }
+
+    //给予
+    @Action("给予<.*?=>x>")
+    public String give(Long id, @Param("x") String s) {
+        if (!Judge.isEmpty(s)) {
+            String[] split = s.split("[xX]");
+            Integer itemId = api.getIdOrDefault(split[0], null);
+            Integer count = 1;
+            if (split.length > 1) count = api.getIntegerOrDefault(split[1], count);
+            if (itemId != null) {
+                ResponseEntity<String> data = api.give(id, itemId, count);
+                if (data.getStatusCode().value() == 200) {
+                    return data.getBody();
+                } else return "❌ " + data.getBody();
+            }
+        }
+        return "❌ 组队后确保队伍中有且仅有2人时可给予\n给予用法:‘给予1001x2’或‘给予经验本x2’";
+    }
 }

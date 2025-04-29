@@ -21,6 +21,7 @@ public class KwGameItemApi extends KwGameApi {
     public ResponseEntity<String> buy(Long id, Integer itemId, Integer count) {
         return doGet("/buy?pid={id}&itemId={itemId}&count={count}", id, itemId, count);
     }
+
     public ResponseEntity<String> sell(Long id, Integer itemId, Integer count) {
         return doGet("/sell?pid={id}&itemId={itemId}&count={count}", id, itemId, count);
     }
@@ -29,4 +30,8 @@ public class KwGameItemApi extends KwGameApi {
         return doGet("/use?pid={id}&itemId={itemId}&count={count}", id, itemId, count);
     }
 
+    //给予
+    public ResponseEntity<String> give(Long id, Integer itemId, Integer count) {
+        return doGet("/give?pid={id}&itemId={itemId}&count={count}", id, itemId, count);
+    }
 }

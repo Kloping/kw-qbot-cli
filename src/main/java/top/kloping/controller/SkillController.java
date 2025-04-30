@@ -55,6 +55,8 @@ public class SkillController {
         return entity.getBody();
     }
 
+    public static String[] PARTS = {"头", "脚", "胸", "腿"};
+
     @Action("宠物装备")
     public Object equip(Long pid) {
         ResponseEntity<String> entity = api.equips(pid);
@@ -63,16 +65,24 @@ public class SkillController {
         List<Object> list = new ArrayList<>();
         byte[] bytes = api.src(equipPet.getPetId(), equipPet.getLevel()).getBody();
         list.add(bytes);
-        String name = convertApi.toName(equipPet.getPetId());
-        StringBuilder sb = new StringBuilder(name);
+        StringBuilder sb = new StringBuilder();
         int i = 1;
+        int n = 0;
         for (EquipPet.EquipData equipData : equipPet.getEquipData()) {
-            sb.append("\n技能").append(i++).append(": ").append(equipData.getName())
-                    .append(" [").append(equipData.getType()).append("]技能")
-                    .append("\n\t ").append(equipData.getDesc());
+            if (equipData.getType() != null) {
+                sb.append("\n技能").append(i++).append(": ").append(equipData.getName())
+                        .append(" [").append(equipData.getType()).append("]技能")
+                        .append("\n\t ").append(equipData.getDesc());
+            } else {
+                if (n == 0) sb.append("\n---------------");
+                sb.append("\n").append(PARTS[n++]).append(" 部分:");
+                if (equipData.getId() == null) sb.append(" 无");
+                else sb.append("\n").append(equipData.getId()).append(".").append(equipData.getName())
+                        .append(equipData.getDesc());
+            }
         }
         list.add(sb);
-        list.add(Map.of(1, "宠物信息", 2, "背包"));
+        list.add(Map.of(1, "宠物信息", 2, "背包", 3, "装备背包"));
         return list;
     }
 }

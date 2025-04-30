@@ -9,7 +9,6 @@ import org.springframework.web.client.RestTemplate;
 import top.kloping.CliMain;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 public abstract class KwGameApi {
 
@@ -88,6 +87,7 @@ public abstract class KwGameApi {
 
     public Integer getIntegerOrDefault(String s, Integer defaultValue) {
         try {
+            if (s == null) return defaultValue;
             return Integer.parseInt(s);
         } catch (Exception e) {
             return defaultValue;

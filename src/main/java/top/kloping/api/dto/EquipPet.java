@@ -20,7 +20,7 @@ public class EquipPet {
     @Data
     public static class EquipData {
         private Integer id;
-        private String type = "skill";
+        private String type;
         private String name;
         private String desc;
     }

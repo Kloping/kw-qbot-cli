@@ -53,7 +53,7 @@ public class BattleService implements StompFrameHandler {
     public void handleFrame(StompHeaders headers, Object payload) {
         BattleStatus battleStatus = (BattleStatus) payload;
         MessageEvent messageEvent = records.get(battleStatus.getPid());
-        List<Object> list = new ArrayList();
+        List<Object> list = new ArrayList<>();
         if (messageEvent != null) {
             list.add(battleStatus.getTips() + "\n位置 名字 血量\n");
             int x = 1;
@@ -76,7 +76,7 @@ public class BattleService implements StompFrameHandler {
             }
             StringBuilder sb = new StringBuilder();
             sb.append("------行动值------");
-            battleStatus.getActionQueue().forEach((k, loc) -> {
+            battleStatus.getActionQueue().forEach((loc, k) -> {
                 BattleStatus.Character v = battleStatus.getLocationMap().get(loc);
                 sb.append("\n> ").append(k).append(" ").append(v.getName()).append(v.getControlled() > 0 ? "(被控)" : "");
             });

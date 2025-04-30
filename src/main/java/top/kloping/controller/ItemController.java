@@ -8,6 +8,7 @@ import io.github.kloping.spt.annotations.Action;
 import io.github.kloping.spt.annotations.AutoStand;
 import io.github.kloping.spt.annotations.Controller;
 import io.github.kloping.spt.annotations.Param;
+import net.mamoe.mirai.message.data.Message;
 import org.springframework.http.ResponseEntity;
 import top.kloping.api.KwGameConvertApi;
 import top.kloping.api.KwGameItemApi;
@@ -134,7 +135,9 @@ public class ItemController {
             } else {
                 ResponseEntity<String> data = convertApi.desc(itemId);
                 if (data.getStatusCode().value() == 200) {
-                    return List.of(registry.getImage(itemId), data.getBody());
+                    Message image = registry.getImage(itemId);
+                    if (image != null) return List.of(image, data.getBody());
+                    return List.of(data.getBody());
                 } else {
                     return "❌ 物品不存在";
                 }

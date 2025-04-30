@@ -6,6 +6,7 @@ import io.github.kloping.spt.interfaces.component.ContextManager;
 import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.contact.Contact;
 import net.mamoe.mirai.message.data.Image;
+import org.springframework.http.ResponseEntity;
 
 import java.io.ByteArrayInputStream;
 import java.util.HashMap;
@@ -17,6 +18,7 @@ import java.util.Map;
  */
 @Entity
 public class SrcRegistry {
+
     private final Map<Integer, Image> id2image = new HashMap<>();
     private final Map<String, Image> url2image = new HashMap<>();
 
@@ -29,7 +31,9 @@ public class SrcRegistry {
     public Image getImage(Integer id) {
         Image image = id2image.get(id);
         if (image == null) {
-            byte[] bytes = api.src(id).getBody();
+            ResponseEntity<byte[]> entity = api.src(id);
+            if (entity == null || entity.getStatusCode().value() != 200) return null;
+            byte[] bytes = entity.getBody();
             Bot bot = contextManager.getContextEntity(Bot.class);
             image = Contact.uploadImage(bot.getAsFriend(), new ByteArrayInputStream(bytes));
             id2image.put(id, image);

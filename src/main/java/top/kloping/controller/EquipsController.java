@@ -34,6 +34,7 @@ public class EquipsController {
     }
 
     public static final String TIPS0 = "装备用法'装备[装备背包中ID]'";
+
     @Action("装备<.*?=>x>")
     public String equip(Long id, @Param("x") String s) {
         if (!Judge.isEmpty(s)) {
@@ -70,5 +71,42 @@ public class EquipsController {
             }
         }
         return TIPS1;
+    }
+
+    @Action(value = "分解装备<.*?=>x>", otherName = {"装备分解<.*?=>x>", "分解<.*?=>x>"})
+    public String disassemble(Long id, @Param("x") String s) {
+        if (!Judge.isEmpty(s)) {
+            Integer eid = api.getIntegerOrDefault(s, null);
+            if (eid == null) {
+                return "分解装备用法'分解装备[装备背包中ID]'";
+            } else {
+                ResponseEntity<String> data = api.disassemble(id, eid);
+                if (data.getStatusCode().value() == 200) {
+                    return "✅ " + data.getBody();
+                } else {
+                    return "❌ " + data.getBody();
+                }
+            }
+        }
+        return "分解装备用法'分解装备[装备背包中ID]'";
+    }
+
+    @Action(value = "升级装备<.*?=>x>", otherName = {"升级<.*?=>x>", "装备升级<.*?=>x>"})
+    public String upgrade(Long id, @Param("x") String s) {
+        if (!Judge.isEmpty(s)) {
+            Integer eid = api.getIntegerOrDefault(s, null);
+            if (eid == null) {
+                return "升级装备用法'升级装备[装备背包中ID]'";
+            } else {
+                ResponseEntity<String> data = api.upgrade(id, eid);
+                if (data.getStatusCode().value() == 200) {
+                    EquipsPre pre = api.convertT(data, EquipsPre.class);
+                    return "✅ " + pre.toString("  ");
+                } else {
+                    return "❌ " + data.getBody();
+                }
+            }
+        }
+        return "升级装备用法'升级装备[装备背包中ID]'";
     }
 }

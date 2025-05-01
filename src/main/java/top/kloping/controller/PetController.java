@@ -90,8 +90,8 @@ public class PetController {
             sb.append("🏃速度: ").append(pet.getSpeed()).append("\n");
             sb.append("⚔️攻击: ").append(pet.getAttack()).append("\n");
             sb.append("🛡️防御: ").append(pet.getDefense()).append("\n");
-            sb.append("🎯暴率: ").append(pet.getCritRate()).append("\n");
-            sb.append("💥暴伤: ").append(pet.getCritDamage());
+            sb.append("🎯暴率: ").append(pet.getCritRate()).append("%\n");
+            sb.append("💥暴伤: ").append(pet.getCritDamage()).append("%");
             return List.of(bytes, sb, Map.of(1, "宠物装备", 2, "背包", 3, "等级突破", 4, "装备背包"));
         } else return response.getBody();
     }

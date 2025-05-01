@@ -23,4 +23,12 @@ public class KwGameEquipsApi extends KwGameApi {
     public ResponseEntity<String> unequip(Long pid, Integer id) {
         return doGet("/unequip?pid={pid}&id={id}", pid, id);
     }
+
+    public ResponseEntity<String> upgrade(Long pid, Integer id) {
+        return doGet("/upgrade?pid={pid}&id={id}", pid, id);
+    }
+
+    public ResponseEntity<String> disassemble(Long pid, Integer id) {
+        return doGet("/disassemble?pid={pid}&id={id}", pid, id);
+    }
 }

@@ -61,16 +61,14 @@ public class TravelController {
         int n = 1;
         List<Object> list = new ArrayList<>();
         for (TravelDto location : i == 1 ? api.locations() : api.locations2()) {
-
-            StringBuilder sb = new StringBuilder();
-            sb.append("\n").append(location.getId()).append("🏞️【").append(location.getName()).append("】")
-                    .append("\n\t🔸地形特征：").append(location.getDesc())
-                    .append("\n\t🔸体力消耗：").append(location.getCost()).append("点/次")
-                    .append("\n\t🔸玩家等级：Lv.").append(location.getReqLevel())
-                    .append("\n\t🔸宠物等级：Lv.").append(location.getReqPetLevel()).append("\n");
+            String sb = "\n" + location.getId() + "🏞️【" + location.getName() + "】" +
+                    "\n\t🔸地形特征：" + location.getDesc() +
+                    "\n\t🔸体力消耗：" + location.getCost() + "点/次" +
+                    "\n\t🔸玩家等级：Lv." + location.getReqLevel() +
+                    "\n\t🔸宠物等级：Lv." + location.getReqPetLevel() + "\n";
             list.add(registry.getImage(location.getId()));
-            list.add(sb.toString());
-            if (n <= 4) opt.put(n++, "游历" + location.getId());
+            list.add(sb);
+            if (n <= 4) opt.put(n++, (i == 1 ? "游历" : "探索") + location.getId());
         }
         list.add(opt);
         return list;
@@ -80,7 +78,7 @@ public class TravelController {
     public Object explore(Long pid, @Param("x") String s) {
         if (!Judge.isEmpty(s)) {
             Integer id = api.getIdOrDefault(s, null);
-            ResponseEntity<String> data = api.travel(pid, id);
+            ResponseEntity<String> data = api.explore(pid, id);
             if (data.getStatusCode().value() == 200) {
                 DataWithTips dataWithTips = api.convertT(data, DataWithTips.class);
                 JSONObject jo = (JSONObject) dataWithTips.getData();

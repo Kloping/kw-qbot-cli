@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 import static top.kloping.api.KwGameApi.getProgressBar;
+import static top.kloping.controller.SkillController.getPetInfoPre;
 
 /**
  * @author github kloping
@@ -80,19 +81,7 @@ public class PetController {
             byte[] bytes = Base64.getDecoder().decode(base64);
             Pet pet = petw.getPet();
             StringBuilder sb = new StringBuilder();
-            sb.append("🐾名字: ").append(pet.getName()).append("\n");
-            sb.append("🔮类型: ").append(pet.getType()).append("\n");
-            sb.append("⭐等级: ").append(pet.getLevel()).append("\n");
-            sb.append("📈经验: ").append(pet.getExperience()).append("/").append(pet.getRequiredExp()).append("\n");
-            sb.append(getProgressBar(pet.getExperience().intValue(), pet.getRequiredExp().intValue(), 10, "⬜", "🟦")).append("\n");
-            sb.append("❤️血量: ").append(pet.getCurrentHp()).append("/").append(pet.getHp()).append("\n");
-            sb.append(getProgressBar(pet.getCurrentHp(), pet.getHp(), 10, "⬜", "🟩")).append("\n");
-            sb.append("🏃速度: ").append(pet.getSpeed()).append("\n");
-            sb.append("⚔️攻击: ").append(pet.getAttack()).append("\n");
-            sb.append("🛡️防御: ").append(pet.getDefense()).append("\n");
-            sb.append("🎯暴率: ").append(pet.getCritRate()).append("%\n");
-            sb.append("💥暴伤: ").append(pet.getCritDamage()).append("%");
-            return List.of(bytes, sb, Map.of(1, "宠物装备", 2, "背包", 3, "等级突破", 4, "装备背包"));
+            return getPetInfoPre(bytes, pet, sb);
         } else return response.getBody();
     }
 

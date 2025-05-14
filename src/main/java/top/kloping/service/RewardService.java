@@ -50,9 +50,8 @@ public class RewardService implements StompFrameHandler {
     public void handleFrame(StompHeaders headers, Object payload) {
         RewardItem rewardItem = (RewardItem) payload;
         MessageEvent messageEvent = records.get(rewardItem.getPid());
-        StringBuilder sb = new StringBuilder("对局结束:\n");
+        StringBuilder sb = new StringBuilder();
         sb.append(rewardItem.isWin() ? "对局获胜\n" : "对局未成功\n");
-        sb.append("获得奖励:\n");
         if (messageEvent != null) {
             sb.append(rewardItem.getTips());
             CliMain.trySendTo(sb.toString(), messageEvent);

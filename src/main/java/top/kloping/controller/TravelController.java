@@ -35,7 +35,7 @@ public class TravelController {
     SrcRegistry registry;
 
     @Action("游历<.*?=>x>")
-    public Object explore(Long pid, @Param("x") String s) {
+    public Object travel(Long pid, @Param("x") String s) {
         if (!Judge.isEmpty(s)) {
             Integer id = api.getIdOrDefault(s, null);
             ResponseEntity<String> data = api.travel(pid, id);
@@ -53,14 +53,14 @@ public class TravelController {
                 return data.getBody();
             }
         }
-        return showLocations();
+        return showLocations(1);
     }
 
-    private @NotNull List<Object> showLocations() {
+    private @NotNull List<Object> showLocations(int i) {
         Map<Integer, String> opt = new HashMap<>();
         int n = 1;
         List<Object> list = new ArrayList<>();
-        for (TravelDto location : api.locations()) {
+        for (TravelDto location : i == 1 ? api.locations() : api.locations2()) {
 
             StringBuilder sb = new StringBuilder();
             sb.append("\n").append(location.getId()).append("🏞️【").append(location.getName()).append("】")
@@ -74,5 +74,27 @@ public class TravelController {
         }
         list.add(opt);
         return list;
+    }
+
+    @Action("探索<.*?=>x>")
+    public Object explore(Long pid, @Param("x") String s) {
+        if (!Judge.isEmpty(s)) {
+            Integer id = api.getIdOrDefault(s, null);
+            ResponseEntity<String> data = api.travel(pid, id);
+            if (data.getStatusCode().value() == 200) {
+                DataWithTips dataWithTips = api.convertT(data, DataWithTips.class);
+                JSONObject jo = (JSONObject) dataWithTips.getData();
+                Integer itemId = jo.getInteger("id");
+                if (itemId != null) {
+                    return List.of(registry.getImage(itemId),
+                            dataWithTips.getTips(), Map.of(1, "信息", 2, "装备背包", 3, "探索", 4, "宠物信息"));
+                } else {
+                    return dataWithTips.getTips();
+                }
+            } else {
+                return data.getBody();
+            }
+        }
+        return showLocations(2);
     }
 }

@@ -84,8 +84,8 @@ public class TravelController {
                 JSONObject jo = (JSONObject) dataWithTips.getData();
                 Integer itemId = jo.getInteger("id");
                 if (itemId != null) {
-                    return List.of(registry.getImage(itemId),
-                            dataWithTips.getTips(), Map.of(1, "信息", 2, "装备背包", 3, "探索", 4, "宠物信息"));
+                    return List.of(registry.getImage(itemId), dataWithTips.getTips(), Map.of(1, "信息",
+                                    2, "装备背包", 3, "探索", 4, "宠物信息"));
                 } else {
                     return dataWithTips.getTips();
                 }

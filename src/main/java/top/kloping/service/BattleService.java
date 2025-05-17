@@ -2,8 +2,9 @@ package top.kloping.service;
 
 import com.alibaba.fastjson.JSON;
 import io.github.kloping.spt.annotations.AutoStand;
+import io.github.kloping.spt.annotations.AutoStandAfter;
 import io.github.kloping.spt.annotations.Entity;
-import lombok.extern.slf4j.Slf4j;
+import io.github.kloping.spt.interfaces.Logger;
 import net.mamoe.mirai.event.events.MessageEvent;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.messaging.simp.stomp.StompFrameHandler;
@@ -25,18 +26,22 @@ import java.util.Map;
  * @date 2025/4/20-23:54
  */
 @Entity
-@Slf4j
 public class BattleService implements StompFrameHandler {
 
-    public BattleService(PetWebSocketClient client) {
-        client.runnables.add(() -> {
+    @AutoStandAfter
+    public void r0(PetWebSocketClient client) {
+        client.addRunnable(() -> {
             StompHeaders headers = new StompHeaders();
             headers.setDestination("/topic/battle");
             headers.setId("battle");
             headers.setHeartbeat(new long[]{10000L, 10000L});
             client.stompSession.subscribe(headers, BattleService.this);
+            logger.info("battle subscribe");
         });
     }
+
+    @AutoStand
+    Logger logger;
 
     @Override
     public @NotNull Type getPayloadType(StompHeaders headers) {
@@ -95,7 +100,7 @@ public class BattleService implements StompFrameHandler {
             }
             list.add(opts);
             CliMain.trySendTo(list, messageEvent);
-        } else log.error("当接收广播时未找到消息事件 {}", JSON.toJSON(payload));
+        } else logger.error("当接收广播时未找到消息事件 " + JSON.toJSON(payload));
     }
 
     private void loc2view(Integer loc, BattleStatus.Character v, String filledChar, List<Object> list) {

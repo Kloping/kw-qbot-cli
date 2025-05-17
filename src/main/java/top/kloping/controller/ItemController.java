@@ -8,6 +8,7 @@ import io.github.kloping.spt.annotations.Action;
 import io.github.kloping.spt.annotations.AutoStand;
 import io.github.kloping.spt.annotations.Controller;
 import io.github.kloping.spt.annotations.Param;
+import io.github.kloping.spt.interfaces.Logger;
 import net.mamoe.mirai.message.data.Message;
 import org.springframework.http.ResponseEntity;
 import top.kloping.api.KwGameConvertApi;
@@ -52,7 +53,7 @@ public class ItemController {
             if (i <= 2) map.put(i++, "使用" + iw.getName());
             else if (i <= 4) map.put(i++, "出售" + iw.getName());
         }
-        return List.of(sb, map);
+        return List.of(sb.toString().trim(), map);
     }
 
     @Action("商城")
@@ -162,5 +163,24 @@ public class ItemController {
             }
         }
         return "❌ 组队后确保队伍中有且仅有2人时可给予\n给予用法:‘给予1001x2’或‘给予经验本x2’";
+    }
+
+    @AutoStand
+    Logger logger;
+
+    //提交对接
+    @Action("提交<.*?=>x>")
+    public Object submit(Long id, @Param("x") String s) {
+        if (!Judge.isEmpty(s)) {
+            String[] split = s.split("[xX]");
+            Integer itemId = api.getIdOrDefault(split[0], null);
+            Integer count = 1;
+            if (split.length > 1) count = api.getIntegerOrDefault(split[1], count);
+            if (itemId != null) {
+                ResponseEntity<String> data = api.submit(id, itemId, count);
+                logger.log("req submit out: " + JSON.toJSONString(data));
+            } else return "❌ 格式错误(未找到相关物品)\n提交示例'提交1001'或'提交苹果x3'";
+        } else return "❌ 格式错误\n提交示例'提交1001'或'提交苹果x3'";
+        return null;
     }
 }

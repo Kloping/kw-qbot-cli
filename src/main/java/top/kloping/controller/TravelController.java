@@ -47,6 +47,7 @@ public class TravelController {
                     return List.of(registry.getImage(itemId),
                             dataWithTips.getTips(), Map.of(1, "背包", 2, "信息", 3, "游历", 4, "宠物信息"));
                 } else {
+                    if (jo.containsKey("rid")) return dataWithTips.getTips()+"\ntips:使用'提交[物品]x[数量]'";
                     return dataWithTips.getTips();
                 }
             } else {

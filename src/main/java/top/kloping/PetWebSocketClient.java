@@ -6,7 +6,6 @@ import io.github.kloping.spt.annotations.AutoStand;
 import io.github.kloping.spt.annotations.AutoStandAfter;
 import io.github.kloping.spt.annotations.Entity;
 import io.github.kloping.spt.interfaces.Logger;
-import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.simp.stomp.StompCommand;
@@ -31,7 +30,6 @@ public class PetWebSocketClient extends StompSessionHandlerAdapter implements Ru
 
     @AutoStand(id = "server.port")
     Integer server_port;
-
     @AutoStandAfter
     public void after() {
         KwGameApi.URL = "http://" + server_ip + ":" + server_port;
@@ -42,13 +40,23 @@ public class PetWebSocketClient extends StompSessionHandlerAdapter implements Ru
     public WebSocketStompClient stompClient;
     public List<Runnable> runnables = new ArrayList<>();
 
-    @SneakyThrows
+    public void addRunnable(Runnable runnable) {
+        runnables.add(runnable);
+        if (stompSession != null && stompSession.isConnected()) {
+            runnable.run();
+        }
+    }
+
     @Override
     public void run() {
         webSocketClient = new StandardWebSocketClient();
         stompClient = new WebSocketStompClient(webSocketClient);
         stompClient.setMessageConverter(new MappingJackson2MessageConverter());
-        tryConnect();
+        try {
+            tryConnect();
+        } catch (Exception e) {
+            logger.error("链接失败:" + PartUtils.getExceptionLine(e));
+        }
     }
 
     public void tryConnect() throws InterruptedException, ExecutionException {
@@ -56,15 +64,15 @@ public class PetWebSocketClient extends StompSessionHandlerAdapter implements Ru
             String url = String.format("ws://%s:%s/ws", server_ip, server_port);
             ListenableFuture<StompSession> future = stompClient.connect(url, this);
             stompSession = future.get();
+            logger.log("首次已链接!");
             stompSession.send("/app/hello", "成功链接!");
             runnables.forEach(Runnable::run);
         }
     }
 
     public PetWebSocketClient() {
-        Public.EXECUTOR_SERVICE.submit(this);
+        CliMain.APPLICATION.INSTANCE.getSTARTED_RUNNABLE().add(() -> Public.EXECUTOR_SERVICE.submit(this));
     }
-
 
     @Override
     public void afterConnected(StompSession stompSession, @NotNull StompHeaders connectedHeaders) {

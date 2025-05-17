@@ -71,14 +71,14 @@ public class SkillController {
         List<Object> list = new ArrayList<>();
         byte[] bytes = api.src(equipPet.getPetId(), equipPet.getLevel()).getBody();
         list.add(bytes);
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder("宠物装备↓↓↓");
         int i = 1;
         int n = 0;
         for (EquipPet.EquipData equipData : equipPet.getEquipData()) {
             if (equipData.getType() != null) {
-                sb.append("\n技能").append(i++).append(": ").append(equipData.getName())
-                        .append(" [").append(equipData.getType()).append("]技能")
-                        .append("\n\t ").append(equipData.getDesc());
+//                sb.append("\n技能").append(i++).append(": ").append(equipData.getName())
+//                        .append(" [").append(equipData.getType()).append("]技能")
+//                        .append("\n\t ").append(equipData.getDesc());
             } else {
                 if (n == 0) sb.append("\n---------------");
                 sb.append("\n").append(PARTS[n++]).append(" 部分:");
@@ -88,10 +88,38 @@ public class SkillController {
             }
         }
         list.add(sb);
-        list.add(Map.of(1, "宠物信息", 2, "背包", 3, "装备背包"));
+        list.add(Map.of(1, "宠物信息", 2, "背包", 3, "装备背包", 4, "宠物技能"));
         return list;
     }
 
+    @Action("宠物技能")
+    public Object equipSkills(Long pid) {
+        ResponseEntity<String> entity = api.equips(pid);
+        if (entity.getStatusCode().value() != 200) return entity.getBody();
+        EquipPet equipPet = api.convertT(entity, EquipPet.class);
+        List<Object> list = new ArrayList<>();
+        byte[] bytes = api.src(equipPet.getPetId(), equipPet.getLevel()).getBody();
+        list.add(bytes);
+        StringBuilder sb = new StringBuilder("宠物技能↓↓↓");
+        int i = 1;
+        int n = 0;
+        for (EquipPet.EquipData equipData : equipPet.getEquipData()) {
+            if (equipData.getType() != null) {
+                sb.append("\n技能").append(i++).append(": ").append(equipData.getName())
+                        .append(" [").append(equipData.getType()).append("]技能")
+                        .append("\n\t ").append(equipData.getDesc());
+            } else {
+//                if (n == 0) sb.append("\n---------------");
+//                sb.append("\n").append(PARTS[n++]).append(" 部分:");
+//                if (equipData.getId() == null) sb.append(" 无");
+//                else sb.append("\n").append(equipData.getId()).append(".").append(equipData.getName())
+//                        .append(equipData.getDesc());
+            }
+        }
+        list.add(sb);
+        list.add(Map.of(1, "宠物信息", 2, "背包", 3, "装备背包", 4, "宠物装备"));
+        return list;
+    }
 
     @Action("当前信息<.*?=>x>")
     public Object info(Long id) {

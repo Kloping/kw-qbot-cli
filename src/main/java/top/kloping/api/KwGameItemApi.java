@@ -34,4 +34,9 @@ public class KwGameItemApi extends KwGameApi {
     public ResponseEntity<String> give(Long id, Integer itemId, Integer count) {
         return doGet("/give?pid={id}&itemId={itemId}&count={count}", id, itemId, count);
     }
+
+    //提交
+    public ResponseEntity<String> submit(Long id, Integer itemId, Integer count) {
+        return doGet("/submit?pid={id}&itemId={itemId}&count={count}", id, itemId, count);
+    }
 }

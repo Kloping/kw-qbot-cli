@@ -85,7 +85,7 @@ public class TravelController {
                 Integer itemId = jo.getInteger("id");
                 if (itemId != null) {
                     return List.of(registry.getImage(itemId), dataWithTips.getTips(), Map.of(1, "信息",
-                                    2, "装备背包", 3, "探索", 4, "宠物信息"));
+                            2, "装备背包", 3, "探索", 4, "宠物信息"));
                 } else {
                     return dataWithTips.getTips();
                 }
@@ -94,5 +94,26 @@ public class TravelController {
             }
         }
         return showLocations(2);
+    }
+
+    @Action("挑战<.*?=>x>")
+    public Object challenge(Long pid, @Param("x") String s) {
+        if (!Judge.isEmpty(s)) {
+            Integer id = api.getIdOrDefault(s, null);
+            ResponseEntity<String> data = api.challenge(pid, id);
+            if (data.getStatusCode().value() == 200) {
+                DataWithTips dataWithTips = api.convertT(data, DataWithTips.class);
+                JSONObject jo = (JSONObject) dataWithTips.getData();
+                Integer mid = jo.getInteger("mid");
+                if (mid != null) {
+                    return List.of(registry.getImage(mid), dataWithTips.getTips());
+                } else {
+                    return dataWithTips.getTips();
+                }
+            } else {
+                return data.getBody();
+            }
+        }
+        return "'挑战'指定'野怪',获得奖励;每次花费30体力";
     }
 }

@@ -40,17 +40,17 @@ public class SkillController {
         if (!Judge.isEmpty(s)) {
             String[] split = s.split("[xX]");
             Integer st = api.getIntegerOrDefault(split[0], null);
-            Integer target = 1;
-            if (split.length > 1) {
-                target = api.getIntegerOrDefault(split[1], 1);
+            if (st != null) {
+                Integer target = 1;
+                if (split.length > 1) target = api.getIntegerOrDefault(split[1], 1);
+                ResponseEntity<String> data = api.use(pid, st, target);
+                if (data.getStatusCode().value() == 200) {
+                    DataWithTips tips = api.convertT(data, DataWithTips.class);
+                    JSONObject jo = (JSONObject) tips.getData();
+                    return tips.getTips() + "\n 当前技能点剩余: "
+                            + KwGameApi.getProgressBar(jo.getInteger("skp"), 5, 5, "○", "●");
+                } else return data.getBody();
             }
-            ResponseEntity<String> data = api.use(pid, st, target);
-            if (data.getStatusCode().value() == 200) {
-                DataWithTips tips = api.convertT(data, DataWithTips.class);
-                JSONObject jo = (JSONObject) tips.getData();
-                return tips.getTips() + "\n 当前技能点剩余: "
-                        + KwGameApi.getProgressBar(jo.getInteger("skp"), 5, 5, "○", "●");
-            } else return data.getBody();
         }
         return "❌ 格式错误\n示例: 技能1x2\n表示为向的对局2号为释放技能1";
     }

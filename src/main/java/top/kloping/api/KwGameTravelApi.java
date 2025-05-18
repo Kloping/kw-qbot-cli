@@ -27,6 +27,10 @@ public class KwGameTravelApi extends KwGameApi {
         return doGet("/challenge?pid={pid}&id={id}", pid, id);
     }
 
+    public ResponseEntity<String> challenges() {
+        return doGet("/challenges");
+    }
+
 
     public List<TravelDto> locations() {
         ResponseEntity<String> data = doGet("/locations");

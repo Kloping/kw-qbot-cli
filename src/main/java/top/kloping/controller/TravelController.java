@@ -1,5 +1,6 @@
 package top.kloping.controller;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import io.github.kloping.judge.Judge;
 import io.github.kloping.spt.annotations.Action;
@@ -119,6 +120,21 @@ public class TravelController {
                 return data.getBody();
             }
         }
-        return "'挑战'指定'野怪',获得奖励;每次花费30体力";
+        return "'挑战'指定'野怪',获得奖励;每次花费30体力\n可挑战列表:" + getAllChallenges();
+    }
+
+    private String getAllChallenges() {
+        ResponseEntity<String> re = api.challenges();
+        if (re.getStatusCode().value() == 200) {
+           StringBuilder sb = new StringBuilder();
+            JSONArray array = JSONArray.parseArray(re.getBody());
+            if (array != null) {
+                for (Object o : array) {
+                    JSONObject jo = (JSONObject) o;
+                    sb.append("\n").append(jo.getInteger("id")).append(".").append(jo.getString("name"));
+                }
+            }
+            return sb.toString();
+        } else return "获取失败";
     }
 }

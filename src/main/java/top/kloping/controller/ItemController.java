@@ -180,6 +180,7 @@ public class ItemController {
             if (itemId != null) {
                 ResponseEntity<String> data = api.submit(id, itemId, count);
                 logger.log("req submit out: " + JSON.toJSONString(data));
+                if (data.getBody() != null) return data.getBody();
             } else return "❌ 格式错误(未找到相关物品)\n提交示例'提交1001'或'提交苹果x3'";
         } else return "❌ 格式错误\n提交示例'提交1001'或'提交苹果x3'";
         return null;

@@ -35,6 +35,7 @@ public class EquipService implements StompFrameHandler {
             logger.info("equip subscribe");
         });
     }
+
     @AutoStand
     Logger logger;
 
@@ -55,7 +56,7 @@ public class EquipService implements StompFrameHandler {
             sb.append(equipSkill.getPetName()).append("习得技能[")
                     .append(equipSkill.getName()).append("]")
                     .append("已装备在").append(equipSkill.getOpt()).append("号技能位");
-            CliMain.trySendTo(List.of(sb, Map.of(1, "宠物装备")), messageEvent);
+            CliMain.trySendTo(List.of(sb, Map.of(1, "宠物技能")), messageEvent);
         } else logger.error("当接收广播时未找到消息事件 " + JSON.toJSON(payload));
     }
 }

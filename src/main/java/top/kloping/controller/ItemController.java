@@ -11,6 +11,7 @@ import io.github.kloping.spt.annotations.Param;
 import io.github.kloping.spt.interfaces.Logger;
 import net.mamoe.mirai.message.data.Message;
 import org.springframework.http.ResponseEntity;
+import top.kloping.StringUtils;
 import top.kloping.api.KwGameConvertApi;
 import top.kloping.api.KwGameItemApi;
 import top.kloping.api.SrcRegistry;
@@ -47,7 +48,7 @@ public class ItemController {
             JSONObject jo = (JSONObject) o;
             ItemWithName iw = jo.toJavaObject(ItemWithName.class);
             int n = iw.getQuantity();
-            sb.append(iw.getSpeciesId()).append(".").append(iw.getName());
+            sb.append(iw.getSpeciesId()).append(".").append(StringUtils.padChineseString(iw.getName()));
             if (n > 1) sb.append("✖️").append(n);
             sb.append("\n");
             if (i <= 2) map.put(i++, "使用" + iw.getName());
@@ -64,7 +65,7 @@ public class ItemController {
         StringBuilder sb = new StringBuilder("🛒 商城 🛒\n");
         sb.append("🆔 .物品名\t\t💰单价\t\t限购\n");
         for (ItemForShop shop : shops) {
-            sb.append(shop.getSpeciesId()).append(".").append(shop.getName());
+            sb.append(shop.getSpeciesId()).append(".").append(StringUtils.padChineseString(shop.getName()));
             sb.append("\t\t").append(shop.getPrice()).append("/个").append("\t\t📦剩")
                     .append(shop.getCount()).append("\n");
         }

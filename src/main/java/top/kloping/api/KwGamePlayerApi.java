@@ -28,6 +28,10 @@ public class KwGamePlayerApi extends KwGameApi {
         return doPost("/work", of("pid", id));
     }
 
+    public ResponseEntity<String> exchangeDiamondToGold(Long pid, int count) {
+        return doGet("/exchange_diamond_to_gold?pid={pid}&count={count}", pid, count);
+    }
+
     //组队信息
     public ResponseEntity<String> team(Long id, Long tid) {
         return doGet("/team?pid={id}&tid={tid}", id, tid);

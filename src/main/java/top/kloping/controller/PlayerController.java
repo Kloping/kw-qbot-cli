@@ -80,6 +80,17 @@ public class PlayerController {
         } else return data.getBody();
     }
 
+    @Action("兑换金币<.*?=>x>")
+    public Object exchangeDiamondToGold(Long id, @Param("x") String text) {
+        int count = 1;
+        if (!Judge.isEmpty(text)) {
+            count = api.getIntegerOrDefault(text, null);
+        }
+        ResponseEntity<String> data = api.exchangeDiamondToGold(id, count);
+        if (data.getStatusCode().value() == 200) {
+            return data.getBody() + "\n使用钻石按照1:100兑换金币";
+        } else return data.getBody() + "\n使用钻石按照1:100兑换金币";
+    }
 
     private Object showInfo(ResponseEntity<String> data) {
         Player player = api.convertT(data, Player.class);

@@ -1,6 +1,7 @@
 package top.kloping.controller;
 
 import io.github.kloping.judge.Judge;
+import io.github.kloping.number.NumberUtils;
 import io.github.kloping.spt.annotations.Action;
 import io.github.kloping.spt.annotations.AutoStand;
 import io.github.kloping.spt.annotations.Controller;
@@ -84,7 +85,7 @@ public class PlayerController {
     public Object exchangeDiamondToGold(Long id, @Param("x") String text) {
         int count = 1;
         if (!Judge.isEmpty(text)) {
-            count = api.getIntegerOrDefault(text, null);
+            count = api.getIntegerOrDefault(NumberUtils.findNumberFromString(text), count);
         }
         ResponseEntity<String> data = api.exchangeDiamondToGold(id, count);
         if (data.getStatusCode().value() == 200) {

@@ -23,4 +23,15 @@ public class StringUtils {
         }
         return sb.toString();
     }
+
+    private static final int l0 = 4;
+
+    public static String padNumberString(Integer n) {
+        String input = String.valueOf(n);
+        if (input == null) return null;
+        int length = input.length();
+        if (length >= l0) return input;
+
+        return " ".repeat(l0 - length) + input;
+    }
 }

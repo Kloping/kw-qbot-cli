@@ -17,7 +17,9 @@ import net.mamoe.mirai.message.data.Message;
 import net.mamoe.mirai.message.data.MessageChainBuilder;
 import net.mamoe.mirai.message.data.QuoteReply;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.web.client.DefaultResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
@@ -31,6 +33,7 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -166,6 +169,9 @@ public class CliMain implements ListenerHost, Runner {
 
     static Method selectM;
 
+    @AutoStand(id = "auth.key")
+    private String key;
+
     @Bean
     public RestTemplate restTemplate() {
         try {
@@ -174,6 +180,14 @@ public class CliMain implements ListenerHost, Runner {
             throw new RuntimeException(e);
         }
         RestTemplate template = new RestTemplate();
+        // 添加请求头拦截器
+        template.setInterceptors(Collections.singletonList(
+                (request, body, execution) -> {
+                    HttpHeaders headers = request.getHeaders();
+                    headers.set("kpet-auth", key);
+                    return execution.execute(request, body);
+                }
+        ));
         template.setErrorHandler(new DefaultResponseErrorHandler() {
             @Override
             public boolean hasError(@NotNull ClientHttpResponse response) throws IOException {

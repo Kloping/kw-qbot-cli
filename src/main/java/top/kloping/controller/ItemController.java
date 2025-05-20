@@ -63,11 +63,11 @@ public class ItemController {
         if (data.getStatusCode().value() != 200) return data.getBody();
         List<ItemForShop> shops = api.convertTs(data, ItemForShop.class);
         StringBuilder sb = new StringBuilder("🛒 商城 🛒\n");
-        sb.append("🆔 .物品名\t\t💰单价\t\t限购\n");
+        sb.append("🆔 .物品名\t\t\t💰单价\t\t\t限购\n");
         for (ItemForShop shop : shops) {
             sb.append(shop.getSpeciesId()).append(".").append(StringUtils.padChineseString(shop.getName()));
-            sb.append("\t\t").append(shop.getPrice()).append("/个").append("\t\t📦剩")
-                    .append(shop.getCount()).append("\n");
+            sb.append("\t\t").append(StringUtils.padNumberString(shop.getPrice()))
+                    .append("/个").append("\t\t📦剩").append(shop.getCount()).append("\n");
         }
         return sb.toString();
     }

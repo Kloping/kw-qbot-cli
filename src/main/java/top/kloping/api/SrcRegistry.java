@@ -2,6 +2,7 @@ package top.kloping.api;
 
 import io.github.kloping.spt.annotations.AutoStand;
 import io.github.kloping.spt.annotations.Entity;
+import io.github.kloping.spt.annotations.Schedule;
 import io.github.kloping.spt.interfaces.component.ContextManager;
 import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.contact.Contact;
@@ -53,5 +54,11 @@ public class SrcRegistry {
             url2image.put(url, image);
         }
         return image;
+    }
+
+    @Schedule("00:01:22")
+    public void clear() {
+        id2image.clear();
+        url2image.clear();
     }
 }

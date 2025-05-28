@@ -30,9 +30,6 @@ public class TravelController {
     KwGameTravelApi api;
 
     @AutoStand
-    KwGameItemApi itemApi;
-
-    @AutoStand
     SrcRegistry registry;
 
     @Action("游历<.*?=>x>")
@@ -59,7 +56,6 @@ public class TravelController {
     }
 
     private @NotNull List<Object> showLocations(int i) {
-        boolean imaged = false;
         Map<Integer, String> opt = new HashMap<>();
         int n = 1;
         List<Object> list = new ArrayList<>();
@@ -69,10 +65,7 @@ public class TravelController {
                     "\n\t🔸体力消耗：" + location.getCost() + "点/次" +
                     "\n\t🔸玩家等级：Lv." + location.getReqLevel() +
                     "\n\t🔸宠物等级：Lv." + location.getReqPetLevel() + "\n";
-            if (!imaged) {
-                list.add(registry.getImage(location.getId()));
-                imaged = true;
-            }
+            list.add(registry.getImage(location.getId()));
             list.add(sb);
             if (n <= 4) opt.put(n++, (i == 1 ? "游历" : "探索") + location.getId());
         }
@@ -126,7 +119,7 @@ public class TravelController {
     private String getAllChallenges() {
         ResponseEntity<String> re = api.challenges();
         if (re.getStatusCode().value() == 200) {
-           StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
             JSONArray array = JSONArray.parseArray(re.getBody());
             if (array != null) {
                 for (Object o : array) {

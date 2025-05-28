@@ -10,7 +10,7 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 public class TaskStatus {
-    private Long playerId;
+    private Long pid;
     private String name;
     private String desc;
     private String type;

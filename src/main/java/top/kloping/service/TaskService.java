@@ -49,7 +49,7 @@ public class TaskService implements StompFrameHandler {
     @Override
     public void handleFrame(StompHeaders headers, Object payload) {
         TaskStatus taskStatus = (TaskStatus) payload;
-        MessageEvent messageEvent = records.get(taskStatus.getPlayerId());
+        MessageEvent messageEvent = records.get(taskStatus.getPid());
         if (messageEvent != null) {
             StringBuilder sb = new StringBuilder("任务\"").append(taskStatus.getName()).append("\"完成")
                     .append("\n").append(taskStatus.getDesc())

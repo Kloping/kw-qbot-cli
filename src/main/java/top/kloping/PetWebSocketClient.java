@@ -1,5 +1,6 @@
 package top.kloping;
 
+import com.alibaba.fastjson.support.spring.messaging.MappingFastJsonMessageConverter;
 import io.github.kloping.common.Public;
 import io.github.kloping.spt.PartUtils;
 import io.github.kloping.spt.annotations.AutoStand;
@@ -51,7 +52,7 @@ public class PetWebSocketClient extends StompSessionHandlerAdapter implements Ru
     public void run() {
         webSocketClient = new StandardWebSocketClient();
         stompClient = new WebSocketStompClient(webSocketClient);
-        stompClient.setMessageConverter(new MappingJackson2MessageConverter());
+        stompClient.setMessageConverter(new MappingFastJsonMessageConverter());
         try {
             tryConnect();
         } catch (Exception e) {

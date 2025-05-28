@@ -8,7 +8,7 @@ import lombok.Data;
  */
 @Data
 public class PetChangeData {
-    private Long id;
+    private Long pid;
     private Integer petId;
     private String name;
 

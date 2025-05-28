@@ -50,7 +50,7 @@ public class PetService implements StompFrameHandler {
     @Override
     public void handleFrame(StompHeaders headers, Object payload) {
         PetChangeData data = (PetChangeData) payload;
-        MessageEvent messageEvent = records.get(data.getId());
+        MessageEvent messageEvent = records.get(data.getPid());
         if (messageEvent != null) {
             String sb;
             if (data.getIsChange()) {

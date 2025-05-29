@@ -8,12 +8,12 @@ import io.github.kloping.spt.annotations.AutoStandAfter;
 import io.github.kloping.spt.annotations.Entity;
 import io.github.kloping.spt.interfaces.Logger;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
 import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
 import org.springframework.util.concurrent.ListenableFuture;
+import org.springframework.web.socket.WebSocketHttpHeaders;
 import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import org.springframework.web.socket.messaging.WebSocketStompClient;
 import top.kloping.api.KwGameApi;
@@ -31,6 +31,10 @@ public class PetWebSocketClient extends StompSessionHandlerAdapter implements Ru
 
     @AutoStand(id = "server.port")
     Integer server_port;
+
+    @AutoStand(id = "auth.key")
+    String key;
+
     @AutoStandAfter
     public void after() {
         KwGameApi.URL = "http://" + server_ip + ":" + server_port;
@@ -63,7 +67,11 @@ public class PetWebSocketClient extends StompSessionHandlerAdapter implements Ru
     public void tryConnect() throws InterruptedException, ExecutionException {
         if (stompSession == null || !stompSession.isConnected()) {
             String url = String.format("ws://%s:%s/ws", server_ip, server_port);
-            ListenableFuture<StompSession> future = stompClient.connect(url, this);
+            WebSocketHttpHeaders headers = new WebSocketHttpHeaders();
+            headers.add("auth", key);
+            StompHeaders headers1 = new StompHeaders();
+            headers1.add("auth", key);
+            ListenableFuture<StompSession> future = stompClient.connect(url, headers, headers1, this);
             stompSession = future.get();
             logger.log("首次已链接!");
             stompSession.send("/app/hello", "成功链接!");

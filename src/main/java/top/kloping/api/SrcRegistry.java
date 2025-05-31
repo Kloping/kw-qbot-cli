@@ -36,8 +36,10 @@ public class SrcRegistry {
             if (entity == null || entity.getStatusCode().value() != 200) return null;
             byte[] bytes = entity.getBody();
             Bot bot = contextManager.getContextEntity(Bot.class);
-            image = Contact.uploadImage(bot.getAsFriend(), new ByteArrayInputStream(bytes));
-            id2image.put(id, image);
+            if (bytes != null) {
+                image = Contact.uploadImage(bot.getAsFriend(), new ByteArrayInputStream(bytes));
+                id2image.put(id, image);
+            }
         }
         return image;
     }
@@ -50,8 +52,10 @@ public class SrcRegistry {
             Integer level = Integer.valueOf(id2level[1]);
             byte[] bytes = api.src(id, level).getBody();
             Bot bot = contextManager.getContextEntity(Bot.class);
-            image = Contact.uploadImage(bot.getAsFriend(), new ByteArrayInputStream(bytes));
-            url2image.put(url, image);
+            if (bytes != null) {
+                image = Contact.uploadImage(bot.getAsFriend(), new ByteArrayInputStream(bytes));
+                url2image.put(url, image);
+            }
         }
         return image;
     }

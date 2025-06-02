@@ -19,12 +19,12 @@ import net.mamoe.mirai.message.data.QuoteReply;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.web.client.DefaultResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
 import top.kloping.api.KwGameApi;
 import top.kloping.config.LoggerImpl;
+import top.kloping.config.OpenConf;
 import top.kloping.controller.SelectController;
 
 import javax.swing.*;
@@ -51,13 +51,18 @@ public class CliMain implements ListenerHost, Runner {
 
     @AutoStand
     private static SelectController selectController;
+
     @AutoStand
     public static PetWebSocketClient client;
 
+    @AutoStand
+    public OpenConf openConf;
+
     @net.mamoe.mirai.event.EventHandler
     public void on(net.mamoe.mirai.event.events.GroupMessageEvent event) {
-        if (event.getSubject().getId() != 764663035L && event.getSubject().getId() != 1041541077L) return;
-        String text = event.getMessage().contentToString();
+        String text = event.getMessage().contentToString().trim();
+        if (!text.equalsIgnoreCase("开") && !text.equalsIgnoreCase("关"))
+            if (!openConf.opened(event.getGroup().getId())) return;
         Long sid = event.getSender().getId();
         APPLICATION.executeMethod(sid, text, event, sid);
         if (text.matches("\\d+")) {
@@ -205,5 +210,10 @@ public class CliMain implements ListenerHost, Runner {
     @Bean("records")
     public Map<Long, MessageEvent> records() {
         return (records = new LinkedHashMap<>());
+    }
+
+    @Bean
+    public OpenConf opens() {
+        return new OpenConf();
     }
 }

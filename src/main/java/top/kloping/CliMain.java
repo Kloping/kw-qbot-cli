@@ -56,7 +56,7 @@ public class CliMain implements ListenerHost, Runner {
     public static PetWebSocketClient client;
 
     @AutoStand
-    public OpenConf openConf;
+    public static OpenConf openConf;
 
     @net.mamoe.mirai.event.EventHandler
     public void on(net.mamoe.mirai.event.events.GroupMessageEvent event) {

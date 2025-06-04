@@ -1,5 +1,7 @@
 package top.kloping.config;
 
+import com.alibaba.fastjson.JSON;
+import io.github.kloping.file.FileUtils;
 import io.github.kloping.initialize.FileInitializeValue;
 
 import java.util.ArrayList;
@@ -13,7 +15,12 @@ public class OpenConf {
     public static final String path = "./conf/opens.json";
 
     public OpenConf() {
-        opens = FileInitializeValue.getValue(path, opens, true);
+        String data = FileUtils.getStringFromFile(path);
+        List<Long> ids = JSON.parseArray(data, Long.class);
+        for (Long id : ids) {
+            if (!opens.contains(id))
+                opens.add(id);
+        }
     }
 
     public List<Long> opens = new ArrayList<>();

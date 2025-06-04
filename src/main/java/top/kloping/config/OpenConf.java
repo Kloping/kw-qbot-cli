@@ -3,6 +3,7 @@ package top.kloping.config;
 import com.alibaba.fastjson.JSON;
 import io.github.kloping.file.FileUtils;
 import io.github.kloping.initialize.FileInitializeValue;
+import io.github.kloping.judge.Judge;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,10 +17,12 @@ public class OpenConf {
 
     public OpenConf() {
         String data = FileUtils.getStringFromFile(path);
-        List<Long> ids = JSON.parseArray(data, Long.class);
-        for (Long id : ids) {
-            if (!opens.contains(id))
-                opens.add(id);
+        if (Judge.isNotEmpty(data)) {
+            List<Long> ids = JSON.parseArray(data, Long.class);
+            for (Long id : ids) {
+                if (!opens.contains(id))
+                    opens.add(id);
+            }
         }
     }
 

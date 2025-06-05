@@ -49,7 +49,7 @@ public class ChatQuestion implements ListenerHost {
     }
 
     public static String getSystemInfo() {
-        return FileUtils.getStringFromFile("./conf/sysinfo.md");
+        return FileUtils.getStringFromFile("./conf/sysinfo.txt");
     }
 
     public static String getKey() {

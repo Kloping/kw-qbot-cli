@@ -3,15 +3,13 @@ package top.kloping.chatai;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import io.github.kloping.file.FileUtils;
+import io.github.kloping.judge.Judge;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import net.mamoe.mirai.event.ListenerHost;
 import net.mamoe.mirai.event.events.MessageEvent;
-import net.mamoe.mirai.message.data.At;
-import net.mamoe.mirai.message.data.MessageChain;
-import net.mamoe.mirai.message.data.QuoteReply;
-import net.mamoe.mirai.message.data.SingleMessage;
+import net.mamoe.mirai.message.data.*;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -27,13 +25,14 @@ public class ChatQuestion implements ListenerHost {
 
     public static final ChatQuestion INSTANCE = new ChatQuestion();
 
-    public static boolean isEmpty(MessageChain message) {
+    public static String getAllStr(MessageChain message) {
+        StringBuilder sb = new StringBuilder();
         for (SingleMessage singleMessage : message) {
-            if (singleMessage instanceof net.mamoe.mirai.message.data.PlainText) return false;
-            else if (singleMessage instanceof net.mamoe.mirai.message.data.Image) return false;
-            else if (singleMessage instanceof At) return false;
+            if (singleMessage instanceof net.mamoe.mirai.message.data.PlainText) {
+                sb.append(singleMessage.contentToString().trim());
+            }
         }
-        return true;
+        return sb.toString();
     }
 
     public static boolean isAt(MessageEvent event) {
@@ -108,4 +107,18 @@ public class ChatQuestion implements ListenerHost {
         }
     }
 
+    @net.mamoe.mirai.event.EventHandler
+    public void on(net.mamoe.mirai.event.events.GroupMessageEvent event) {
+        if (isAt(event)) {
+            String all = getAllStr(event.getMessage());
+            if (Judge.isNotEmpty(all)){
+                String out = chat(all);
+                MessageChainBuilder builder = new MessageChainBuilder();
+                builder.append(new QuoteReply(event.getMessage()));
+                builder.append(new At(event.getSender().getId()));
+                builder.append(out);
+                event.getSubject().sendMessage(builder.build());
+            }
+        }
+    }
 }

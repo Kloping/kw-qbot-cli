@@ -23,6 +23,7 @@ import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.web.client.DefaultResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
 import top.kloping.api.KwGameApi;
+import top.kloping.chatai.ChatQuestion;
 import top.kloping.config.LoggerImpl;
 import top.kloping.config.OpenConf;
 import top.kloping.controller.SelectController;
@@ -47,6 +48,8 @@ public class CliMain implements ListenerHost, Runner {
     public static void main(String[] args) {
         io.github.kloping.common.Public.EXECUTOR_SERVICE.submit(() -> MiraiConsoleTerminalLoader.INSTANCE.startAsDaemon(TERMINAL));
         net.mamoe.mirai.event.GlobalEventChannel.INSTANCE.registerListenerHost(INSTANCE);
+        //ai
+        net.mamoe.mirai.event.GlobalEventChannel.INSTANCE.registerListenerHost(ChatQuestion.INSTANCE);
     }
 
     @AutoStand

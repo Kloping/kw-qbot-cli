@@ -57,7 +57,7 @@ public class ChatQuestion implements ListenerHost {
     }
 
     public static String getModel() {
-        return "deepseek-v3";
+        return FileUtils.getStringFromFile("./conf/model.txt");
     }
 
     @Data
@@ -89,6 +89,7 @@ public class ChatQuestion implements ListenerHost {
 
         aiData.setMessages(new ArrayList<>(messages));
         try {
+            System.out.println("开始调用AI for " + question);
             Document doc0 = Jsoup.connect("https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions")
                     .header("Content-Type", "application/json")
                     .header("Authorization", "Bearer " + getKey())
@@ -111,7 +112,7 @@ public class ChatQuestion implements ListenerHost {
     public void on(net.mamoe.mirai.event.events.GroupMessageEvent event) {
         if (isAt(event)) {
             String all = getAllStr(event.getMessage());
-            if (Judge.isNotEmpty(all)){
+            if (Judge.isNotEmpty(all)) {
                 String out = chat(all);
                 MessageChainBuilder builder = new MessageChainBuilder();
                 builder.append(new QuoteReply(event.getMessage()));

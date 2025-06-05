@@ -65,6 +65,7 @@ public class ChatQuestion implements ListenerHost {
         private String model;
         private List<Message> messages;
         private double temperature;
+        private int maxTokens = 300;
         private Boolean stream = false;
     }
 

@@ -37,6 +37,7 @@ public class ChooseService implements StompFrameHandler {
             logger.info("choose subscribe");
         });
     }
+
     @AutoStand
     Logger logger;
 
@@ -59,7 +60,7 @@ public class ChooseService implements StompFrameHandler {
         ChooseOptions chooseOptions = (ChooseOptions) payload;
         MessageEvent messageEvent = records.get(chooseOptions.getPid());
         if (messageEvent != null) {
-            StringBuilder sb = new StringBuilder(chooseOptions.getTips()).append("\n");
+            StringBuilder sb = new StringBuilder("必选!!! 数字选择").append(chooseOptions.getTips()).append("\n");
             int i = 1;
             Map<Integer, String> st2url = new HashMap<>();
             for (ChooseOptions.Option option : chooseOptions.getList()) {

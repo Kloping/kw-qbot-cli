@@ -42,7 +42,7 @@ public class SkillController {
             Integer st = api.getIntegerOrDefault(split[0], null);
             if (st != null) {
                 Integer target = 1;
-                if (split.length > 1) target = api.getIntegerOrDefault(split[1], 1);
+                if (split.length > 1) target = api.getIntegerOrDefault(split[1], 0);
                 ResponseEntity<String> data = api.use(pid, st, target);
                 if (data.getStatusCode().value() == 200) {
                     DataWithTips tips = api.convertT(data, DataWithTips.class);

@@ -48,7 +48,7 @@ public class SkillController {
                     DataWithTips tips = api.convertT(data, DataWithTips.class);
                     JSONObject jo = (JSONObject) tips.getData();
                     return tips.getTips() + "\n 当前技能点剩余: "
-                            + KwGameApi.getProgressBar(jo.getInteger("skp"), 5, 5, "○", "●");
+                            + KwGameApi.getProgressBar(jo.getInteger("skp"), 6, 6, "○", "●");
                 } else return data.getBody();
             }
         }

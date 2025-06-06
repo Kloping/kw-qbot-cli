@@ -81,7 +81,7 @@ public class BattleService implements StompFrameHandler {
             }
             StringBuilder sb = new StringBuilder();
             sb.append("------行动值------");
-            battleStatus.getActionQueue().forEach((loc, k) -> {
+            battleStatus.getSortedActionQueue().forEach((loc, k) -> {
                 BattleStatus.Character v = battleStatus.getLocationMap().get(loc);
                 sb.append("\n> ").append(k).append(" ").append(v.getName()).append(v.getControlled() > 0 ? "(被控)" : "");
             });

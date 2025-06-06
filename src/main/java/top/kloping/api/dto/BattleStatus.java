@@ -1,12 +1,10 @@
 package top.kloping.api.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
+import java.util.*;
 
 /**
  * @author github kloping
@@ -30,13 +28,29 @@ public class BattleStatus {
     }
 
     private Queue<BattleRecord> records;
-    private List<Integer> pets = new ArrayList<>();
-    private List<Integer> monsters = new ArrayList<>();
-
+    private List<Integer> pets = new LinkedList<>();
+    private List<Integer> monsters = new LinkedList<>();
+    //lo2av
     private Map<Integer, Integer> actionQueue;
     private Map<Integer, Character> locationMap;
 
-    private List<String> mayopts = new ArrayList<>();
+    private List<String> mayopts = new LinkedList<>();
+
+    //按照value升序重新排
+    public Map<Integer, Integer> getSortedActionQueue() {
+        if (actionQueue == null || actionQueue.isEmpty()) {
+            return new LinkedHashMap<>();
+        }
+
+        List<Map.Entry<Integer, Integer>> entries = new ArrayList<>(actionQueue.entrySet());
+        Collections.sort(entries, (e1, e2) -> e1.getValue().compareTo(e2.getValue()));
+
+        Map<Integer, Integer> sortedMap = new LinkedHashMap<>();
+        for (Map.Entry<Integer, Integer> entry : entries) {
+            sortedMap.put(entry.getKey(), entry.getValue());
+        }
+        return sortedMap;
+    }
 
     @Data
     public static class Character {
@@ -77,6 +91,8 @@ public class BattleStatus {
     }
 
     @Data
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class BattleRecord {
         private String aname;
         private String opt;

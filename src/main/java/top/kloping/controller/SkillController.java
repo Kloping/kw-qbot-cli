@@ -72,18 +72,19 @@ public class SkillController {
         byte[] bytes = api.src(equipPet.getPetId(), equipPet.getLevel()).getBody();
         list.add(bytes);
         StringBuilder sb = new StringBuilder("宠物装备↓↓↓");
-        int i = 1;
         int n = 0;
+        if (equipPet.getEffects() != null && !equipPet.getEffects().isEmpty()) {
+            sb.append("\n已激活套装效果:");
+            for (String effect : equipPet.getEffects()) {
+                sb.append("\n").append(effect);
+            }
+        }
         for (EquipPet.EquipData equipData : equipPet.getEquipData()) {
-            if (equipData.getType() != null) {
-//                sb.append("\n技能").append(i++).append(": ").append(equipData.getName())
-//                        .append(" [").append(equipData.getType()).append("]技能")
-//                        .append("\n\t ").append(equipData.getDesc());
-            } else {
+            if (equipData.getType() == null) {
                 if (n == 0) sb.append("\n---------------");
-                sb.append("\n").append(PARTS[n++]).append(" 部分:");
-                if (equipData.getId() == null) sb.append(" 无");
-                else sb.append("\n").append(equipData.getId()).append(".").append(equipData.getName())
+                sb.append("\n[").append(PARTS[n++]).append("]部分: ");
+                if (equipData.getId() == null) sb.append("无");
+                else sb.append(equipData.getId()).append(".").append(equipData.getName())
                         .append(equipData.getDesc());
             }
         }
@@ -102,18 +103,11 @@ public class SkillController {
         list.add(bytes);
         StringBuilder sb = new StringBuilder("宠物技能↓↓↓");
         int i = 1;
-        int n = 0;
         for (EquipPet.EquipData equipData : equipPet.getEquipData()) {
             if (equipData.getType() != null) {
                 sb.append("\n技能").append(i++).append(": ").append(equipData.getName())
                         .append(" [").append(equipData.getType()).append("]技能")
                         .append("\n\t ").append(equipData.getDesc());
-            } else {
-//                if (n == 0) sb.append("\n---------------");
-//                sb.append("\n").append(PARTS[n++]).append(" 部分:");
-//                if (equipData.getId() == null) sb.append(" 无");
-//                else sb.append("\n").append(equipData.getId()).append(".").append(equipData.getName())
-//                        .append(equipData.getDesc());
             }
         }
         list.add(sb);

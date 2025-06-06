@@ -14,8 +14,8 @@ public class EquipPet {
     private Long pid;
     private Integer petId;
     private Integer level;
+    private List<String> effects;
     private List<EquipData> equipData = new ArrayList<>();
-
 
     @Data
     public static class EquipData {

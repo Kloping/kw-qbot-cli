@@ -2,13 +2,16 @@ package top.kloping.api;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import io.github.kloping.judge.Judge;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import top.kloping.CliMain;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public abstract class KwGameApi {
 
@@ -118,5 +121,15 @@ public abstract class KwGameApi {
         } else return null;
     }
 
-
+    public Map<Integer, String> logs() {
+        ResponseEntity<String> e = TEMPLATE.getForEntity(URL + "/tt/logs", String.class);
+        if (e.getStatusCode().value() == 200) {
+            JSONObject jo = JSON.parseObject(e.getBody());
+            Map<Integer, String> map = new HashMap<>();
+            if (jo != null) {
+                jo.forEach((k, v) -> map.put(Integer.parseInt(k), v.toString()));
+            }
+            return map;
+        } else return null;
+    }
 }

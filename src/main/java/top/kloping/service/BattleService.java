@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author github kloping
@@ -88,7 +89,10 @@ public class BattleService implements StompFrameHandler {
             list.add(sb.toString());
             sb.delete(0, sb.length());
             sb.append("\n------行动记录------");
+            AtomicInteger size = new AtomicInteger(1);
+            final int max = 7;
             battleStatus.getRecords().forEach(v -> {
+                if (size.getAndIncrement() > max) return;
                 sb.append("\n").append(v.getBname()).append(" ").append(v.getOpt()).append(" <").append(v.getAname());
             });
             list.add(sb.toString());

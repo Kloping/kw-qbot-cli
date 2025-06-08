@@ -32,9 +32,6 @@ public class SkillController {
     @AutoStand
     private KwGameSkillApi api;
 
-    @AutoStand
-    private KwGameConvertApi convertApi;
-
     @Action("技能<.*?=>x>")
     public Object skill(Long pid, @Param("x") String s) {
         if (!Judge.isEmpty(s)) {

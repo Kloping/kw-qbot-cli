@@ -18,4 +18,6 @@ public class RewardItem {
     private Long pid;
     private boolean win;
     private String tips;
+
+    private String iconPath;
 }

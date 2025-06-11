@@ -22,6 +22,7 @@ public class SrcRegistry {
 
     private final Map<Integer, Image> id2image = new HashMap<>();
     private final Map<String, Image> url2image = new HashMap<>();
+    private final Map<String, Image> path2image = new HashMap<>();
 
     @AutoStand
     KwGameApi api;
@@ -39,6 +40,21 @@ public class SrcRegistry {
             if (bytes != null) {
                 image = Contact.uploadImage(bot.getAsFriend(), new ByteArrayInputStream(bytes));
                 id2image.put(id, image);
+            }
+        }
+        return image;
+    }
+
+    public Image getImageByPath(String path) {
+        Image image = path2image.get(path);
+        if (image == null) {
+            ResponseEntity<byte[]> entity = KwGameGachaApi.TEMPLATE.getForEntity(KwGameApi.URL + path, byte[].class);
+            if (entity.getStatusCode().value() != 200) return null;
+            byte[] bytes = entity.getBody();
+            Bot bot = contextManager.getContextEntity(Bot.class);
+            if (bytes != null) {
+                image = Contact.uploadImage(bot.getAsFriend(), new ByteArrayInputStream(bytes));
+                path2image.put(path, image);
             }
         }
         return image;
@@ -64,5 +80,6 @@ public class SrcRegistry {
     public void clear() {
         id2image.clear();
         url2image.clear();
+        path2image.clear();
     }
 }

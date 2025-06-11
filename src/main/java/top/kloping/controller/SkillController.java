@@ -58,7 +58,7 @@ public class SkillController {
         return entity.getBody();
     }
 
-    public static String[] PARTS = {"头", "脚", "胸", "腿"};
+    public static String[] PARTS = {"宝石","头", "脚", "胸", "腿"};
 
     @Action("宠物装备")
     public Object equip(Long pid) {

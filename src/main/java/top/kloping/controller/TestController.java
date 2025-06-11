@@ -61,7 +61,7 @@ public class TestController {
         integers.sort((o1, o2) -> o2 - o1);
         for (Integer a : integers) {
             sb.append("V").append(a).append(":").append(map.get(a)).append("\n");
-            if (i >= max) break;
+            if (++i > max) break;
         }
         return sb.toString();
     }

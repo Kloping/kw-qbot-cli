@@ -20,7 +20,7 @@ public class EquipsController {
     KwGameEquipsApi api;
 
     @Action("装备背包<.*?=>x>")
-    public String give(Long id, @Param("x") String s) {
+    public String bags(Long id, @Param("x") String s) {
         Integer cn = api.getIntegerOrDefault(s, 1);
         ResponseEntity<String> data = api.bag(id, cn);
         if (data != null && data.getStatusCode().value() == 200) {
@@ -108,5 +108,19 @@ public class EquipsController {
             }
         }
         return "升级装备用法'升级装备[装备背包中ID]'";
+    }
+
+    @Action(value = "转让<.*?=>x>", otherName = {"转让装备<.*?=>x>", "装备转让<.*?=>x>"})
+    public String give(Long id, @Param("x") String s) {
+        if (!Judge.isEmpty(s)) {
+            Integer eid = api.getIdOrDefault(s, null);
+            if (eid != null) {
+                ResponseEntity<String> data = api.transferEquip(id, eid);
+                if (data.getStatusCode().value() == 200) {
+                    return data.getBody();
+                } else return "❌ " + data.getBody();
+            }
+        }
+        return "❌ 组队后确保队伍中有且仅有2人时可转让装备\n给予用法:‘转让装备[ID]’或‘装备转让[ID]’";
     }
 }

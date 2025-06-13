@@ -31,4 +31,10 @@ public class KwGameEquipsApi extends KwGameApi {
     public ResponseEntity<String> disassemble(Long pid, Integer id) {
         return doGet("/disassemble?pid={pid}&id={id}", pid, id);
     }
+
+    public ResponseEntity<String> transferEquip(Long pid, Integer eid) {
+        return doGet("/transfer-equip?pid={pid}&eid={eid}", pid, eid);
+    }
+
+
 }

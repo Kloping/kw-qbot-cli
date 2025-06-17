@@ -35,7 +35,7 @@ public class SkillController {
     @Action("技能<.*?=>x>")
     public Object skill(Long pid, @Param("x") String s) {
         if (!Judge.isEmpty(s)) {
-            String[] split = s.split("[xX]");
+            String[] split = s.split("[xX* ]");
             Integer st = api.getIntegerOrDefault(split[0], null);
             if (st != null) {
                 Integer target = 0;

@@ -68,7 +68,7 @@ public abstract class KwGameApi {
     }
 
     public static String getProgressBar(int current, int total, int length, String emptyChar, String filledChar) {
-        int filledLength = getFilledLength((double) current, total, length);
+        int filledLength = getFilledLength(current, total, length);
         if (total==0) filledLength = length;
         return String.valueOf(filledChar).repeat(Math.max(0, filledLength)) + String.valueOf(emptyChar).repeat(Math.max(0, length - filledLength));
     }

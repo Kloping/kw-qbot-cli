@@ -110,6 +110,7 @@ public class BattleService implements StompFrameHandler {
     private void loc2view(Integer loc, BattleStatus.Character v, String filledChar, List<Object> list) {
         StringBuilder sb = new StringBuilder();
         sb.append(getN(loc)).append(".").append(v.getName()).append(" Lv.").append(v.getLevel())
+                .append(" ").append("\uD83D\uDC9A".repeat(v.getLifes()))
                 .append(v.getHpc() >= 0 ? " \t+" : " \t").append(v.getHpc()).append("hp\n")
                 .append(KwGameApi.getProgressBar(v.getHpb(), 100, 9, "⬜", filledChar));
 

@@ -87,7 +87,7 @@ public class CliMain implements ListenerHost, Runner {
             APPLICATION = new StarterObjectApplication(CliMain.class);
             APPLICATION.setAccessTypes(MessageEvent.class, Long.class);
             APPLICATION.setMainKey(Long.class);
-            APPLICATION.setWaitTime(7000);
+            APPLICATION.setWaitTime(20000);
             APPLICATION.setAllAfter(INSTANCE);
             APPLICATION.addConfFile("./conf/conf.txt");
             APPLICATION.logger = LoggerImpl.INSTANCE;

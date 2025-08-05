@@ -1,5 +1,6 @@
 package top.kloping.controller;
 
+import io.github.kloping.common.Public;
 import io.github.kloping.spt.annotations.Action;
 import io.github.kloping.spt.annotations.AutoStand;
 import io.github.kloping.spt.annotations.Controller;
@@ -31,29 +32,32 @@ public class GachaController {
     public Object list(MessageEvent event) {
         ResponseEntity<String> data = api.list();
 
-        ForwardMessageBuilder builder = new ForwardMessageBuilder(event.getBot().getAsFriend());
 
         if (data.getStatusCode().is2xxSuccessful()) {
-            builder.add(event.getBot().getAsFriend(), new PlainText("常驻卡池\n单抽命令: 常驻祈愿/常驻单抽\n十连命令: 十连常驻/常驻十连"));
-            builder.add(event.getBot().getAsFriend(), new PlainText("限定卡池\n单抽命令: 限定祈愿/限定单抽\n十连命令: 十连限定/限定十连"));
+            Public.EXECUTOR_SERVICE.submit(() -> {
 
-            List<GachaPoolPre> gachaPoolPres = api.convertTs(data, GachaPoolPre.class);
-            for (GachaPoolPre gachaPoolPre : gachaPoolPres) {
-                MessageChainBuilder b0 = new MessageChainBuilder();
+                ForwardMessageBuilder builder = new ForwardMessageBuilder(event.getBot().getAsFriend());
+                builder.add(event.getBot().getAsFriend(), new PlainText("常驻卡池\n单抽命令: 常驻祈愿/常驻单抽\n十连命令: 十连常驻/常驻十连"));
+                builder.add(event.getBot().getAsFriend(), new PlainText("限定卡池\n单抽命令: 限定祈愿/限定单抽\n十连命令: 十连限定/限定十连"));
 
-                b0.append(gachaPoolPre.getName()).append("\n");
-                b0.append(registry.getImageByPath(gachaPoolPre.getIconPath()));
-                b0.append(gachaPoolPre.getDesc()).append("\n");
-                b0.append("卡池时间: ").append(gachaPoolPre.getTime()).append("\n");
-                b0.append("---------------\n");
-                b0.append("单抽: ").append(String.valueOf(gachaPoolPre.getOne())).append(gachaPoolPre.getDw())
-                        .append("\t\t").append("十连: ").append(String.valueOf(gachaPoolPre.getTen())).append(gachaPoolPre.getDw());
+                List<GachaPoolPre> gachaPoolPres = api.convertTs(data, GachaPoolPre.class);
+                for (GachaPoolPre gachaPoolPre : gachaPoolPres) {
+                    MessageChainBuilder b0 = new MessageChainBuilder();
 
-                builder.add(event.getBot().getAsFriend(), b0.build());
-            }
+                    b0.append(gachaPoolPre.getName()).append("\n");
+                    b0.append(registry.getImageByPath(gachaPoolPre.getIconPath()));
+                    b0.append(gachaPoolPre.getDesc()).append("\n");
+                    b0.append("卡池时间: ").append(gachaPoolPre.getTime()).append("\n");
+                    b0.append("---------------\n");
+                    b0.append("单抽: ").append(String.valueOf(gachaPoolPre.getOne())).append(gachaPoolPre.getDw())
+                            .append("\t\t").append("十连: ").append(String.valueOf(gachaPoolPre.getTen())).append(gachaPoolPre.getDw());
 
-            event.getSubject().sendMessage(builder.build());
+                    builder.add(event.getBot().getAsFriend(), b0.build());
+                }
 
+                event.getSubject().sendMessage(builder.build());
+
+            });
             return null;
         }
         return "暂无信息";

@@ -7,6 +7,7 @@ import io.github.kloping.spt.annotations.Bean;
 import io.github.kloping.spt.annotations.ComponentScan;
 import io.github.kloping.spt.entity.interfaces.Runner;
 import io.github.kloping.spt.exceptions.NoRunException;
+import io.github.kloping.spt.impls.QueueExecutorImpl;
 import io.github.kloping.url.UrlUtils;
 import net.mamoe.mirai.console.terminal.MiraiConsoleImplementationTerminal;
 import net.mamoe.mirai.console.terminal.MiraiConsoleTerminalLoader;
@@ -31,6 +32,7 @@ import top.kloping.controller.SelectController;
 import javax.swing.*;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
@@ -87,7 +89,6 @@ public class CliMain implements ListenerHost, Runner {
             APPLICATION = new StarterObjectApplication(CliMain.class);
             APPLICATION.setAccessTypes(MessageEvent.class, Long.class);
             APPLICATION.setMainKey(Long.class);
-            APPLICATION.setWaitTime(45000);
             APPLICATION.setAllAfter(INSTANCE);
             APPLICATION.addConfFile("./conf/conf.txt");
             APPLICATION.logger = LoggerImpl.INSTANCE;
@@ -96,6 +97,16 @@ public class CliMain implements ListenerHost, Runner {
             APPLICATION.logger.setFormat(new SimpleDateFormat("yyy/MM/dd HH:mm:ss:SSS"));
             APPLICATION.run0(CliMain.class);
             APPLICATION.INSTANCE.getContextManager().append(event.getBot());
+            try {
+                QueueExecutorImpl queueExecutor = (QueueExecutorImpl) APPLICATION.INSTANCE.getQueueExecutor();
+                Field field = queueExecutor.getClass().getDeclaredField("waitTime");
+                field.setAccessible(true);
+                field.set(queueExecutor, 32000);
+            } catch (NoSuchFieldException e) {
+                throw new RuntimeException(e);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 

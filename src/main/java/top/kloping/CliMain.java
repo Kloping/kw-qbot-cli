@@ -48,6 +48,7 @@ public class CliMain implements ListenerHost, Runner {
     private static boolean online = false;
 
     public static void main(String[] args) {
+        System.setProperty("overflow.timeout","30000");
         io.github.kloping.common.Public.EXECUTOR_SERVICE.submit(() -> MiraiConsoleTerminalLoader.INSTANCE.startAsDaemon(TERMINAL));
         net.mamoe.mirai.event.GlobalEventChannel.INSTANCE.registerListenerHost(INSTANCE);
         //ai

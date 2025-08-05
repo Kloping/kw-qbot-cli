@@ -69,21 +69,6 @@
         </dependency>
         <dependency>
             <groupId>net.mamoe</groupId>
-            <artifactId>mirai-core-jvm</artifactId>
-            <version>${mirai-version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>net.mamoe</groupId>
-                    <artifactId>mirai-core-jvm</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>net.mamoe</groupId>
             <artifactId>mirai-console-terminal</artifactId>
             <version>${mirai-version}</version>
             <exclusions>
